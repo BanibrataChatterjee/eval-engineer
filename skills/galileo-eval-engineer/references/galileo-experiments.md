@@ -1,6 +1,6 @@
 # Galileo Experiments Reference
 
-Eval Engineer v0.1 should use Galileo experiments for controlled reference-agent
+Eval Engineer should use Galileo experiments for controlled reference-agent
 evaluation. Experiments are for sample evals and repeatable before/after
 verification. Log streams are the production or live-traffic RCA path and are
 covered separately in `galileo-sources.md`.

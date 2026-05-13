@@ -98,6 +98,12 @@
   templates, debug-packet naming, and tests for the skill itself (`GAL-89`).
 - Drafted `blogs/skills-robust-eval-loop.md`, a blog on how skills add a
   Galileo-backed eval loop to generic Codex and Claude workflows (`GAL-89`).
+- Reworked the main `README.md` to lead with the Galileo-backed eval loop,
+  explain why the skill matters for Codex and Claude workflows, show the
+  debug-packet flow, and use version-neutral project language (`GAL-90`).
+- Trimmed `README.md` again so it focuses on why Eval Engineer exists, how the
+  eval loop works, what the skill adds, and one concrete example instead of
+  setup and repo-maintenance detail (`GAL-91`).
 - Ran a TC-1 Anthropic correctness-without-ground-truth trial for `GAL-87`:
   `tool-calling-support-correctness-no-gt-20260513T071203Z`
   (`b9e4b120-66f8-4b4a-acb6-e57addb68ace`). The runner sent only
@@ -120,6 +126,8 @@
   - `GAL-87`: answer correctness follow-up for policy explanations.
   - `GAL-88`: completed first generalized Galileo RCA recipe.
   - `GAL-89`: completed skills eval-loop notes and blog.
+  - `GAL-90`: completed README framing and draft wording cleanup.
+  - `GAL-91`: completed README narrative cleanup.
   - `GAL-82`: first RAG reference implementation.
   - `GAL-84`: completed root `AGENTS.md` repo operating instructions.
   - `GAL-85`: completed RCA and Galileo discoverability framing.

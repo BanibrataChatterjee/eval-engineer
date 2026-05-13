@@ -1,8 +1,8 @@
-# Eval Engineer v0.1 Tasks
+# Eval Engineer Tasks
 
 ## Milestone 1: Planning and Notes
 
-- [x] Add `docs/plan.md` with the v0.1 direction.
+- [x] Add `docs/plan.md` with the initial direction.
 - [x] Add `docs/tasks.md` with implementation milestones.
 - [x] Add dated repo notes under `notes/`.
 - [x] Pin SDK dependencies and add reusable env loading.
@@ -12,6 +12,10 @@
 - [x] Remove overlapping `memories/` notes in favor of `notes/` and `.galileo/learnings.md`.
 - [x] Capture skills-as-eval-loop notes and draft the Codex/Claude blog
   (`GAL-89`).
+- [x] Improve the main README framing and remove version-specific draft wording
+  (`GAL-90`).
+- [x] Trim the main README to focus on why/how plus one concrete example
+  (`GAL-91`).
 
 ## Milestone 2: Reference Agent
 
@@ -67,6 +71,8 @@
 - [x] Create and close `GAL-85` for RCA and Galileo discoverability framing.
 - [x] Create and close `GAL-88` for the first generalized Galileo RCA recipe.
 - [x] Create and close `GAL-89` for the skills eval-loop notes and blog.
+- [x] Create and close `GAL-90` for README framing and draft wording cleanup.
+- [x] Create and close `GAL-91` for README narrative cleanup.
 
 ## Milestone 4: Skill Knowledge
 

@@ -1,4 +1,4 @@
-# Eval Engineer v0.1 Plan
+# Eval Engineer Plan
 
 ## Vision
 
@@ -77,7 +77,7 @@ Metric configuration starts with non-Luna agent/tool metrics:
 - `tool_selection_quality`
 - `tool_error_rate`
 
-Do not use Luna metrics in v0.1. The Galileo metrics docs split normal preset
+Do not use Luna metrics for the initial reference path. The Galileo metrics docs split normal preset
 metrics and Luna-2 metrics into separate families, and this workspace does not
 have Luna metrics available.
 
