@@ -1,0 +1,7 @@
+interface:
+  display_name: "Galileo Eval Engineer"
+  short_description: "Improve agents from Galileo evidence"
+  default_prompt: "Use $galileo-eval-engineer to inspect the current Galileo evidence, diagnose the AI app failure, propose a bounded fix, and write a verification plan."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,53 @@
+{
+  "schema_version": "0.1",
+  "project_id": "example-project",
+  "run_id": "tool-run-001",
+  "run_name": "crm-agent-baseline",
+  "agent_type": "tool_calling",
+  "summary": {
+    "num_traces": 2,
+    "top_failing_metrics": ["action_completion", "tool_selection_quality"],
+    "metrics": {
+      "action_completion": 0.31,
+      "tool_selection_quality": 0.44
+    }
+  },
+  "dataset": {
+    "case_id": "CRM-42",
+    "user_message": "Update Acme's renewal date to May 30.",
+    "expected_tool_calls": [
+      {
+        "tool": "update_crm_record",
+        "args": {
+          "account": "Acme",
+          "field": "renewal_date",
+          "value": "May 30"
+        }
+      }
+    ]
+  },
+  "session_output": {
+    "actual_tool_calls": [
+      {
+        "tool": "send_email",
+        "args": {
+          "recipient": "account_owner",
+          "subject": "Renewal date update"
+        }
+      }
+    ]
+  },
+  "traces": [
+    {
+      "trace_id": "trace-tool-001",
+      "span_id": "span-tool-001",
+      "session_id": "session-tool-001",
+      "url": "https://app.galileo.ai/project/example/traces/trace-tool-001",
+      "scores": {
+        "action_completion": 0.31,
+        "tool_selection_quality": 0.44
+      },
+      "notes": "The agent chose a communication action instead of updating the CRM record."
+    }
+  ]
+}
