@@ -128,9 +128,19 @@
   - `GAL-89`: completed skills eval-loop notes and blog.
   - `GAL-90`: completed README framing and draft wording cleanup.
   - `GAL-91`: completed README narrative cleanup.
+  - `GAL-93`: Eval Engineer launch blog.
+  - `GAL-94`: Eval Engineer launch graphics.
   - `GAL-82`: first RAG reference implementation.
   - `GAL-84`: completed root `AGENTS.md` repo operating instructions.
   - `GAL-85`: completed RCA and Galileo discoverability framing.
+
+## 2026-05-14
+
+### Done
+
+- Created launch-package Linear issues and moved them to In Progress:
+  - `GAL-93`: Eval Engineer launch blog.
+  - `GAL-94`: Eval Engineer launch graphics.
 
 ### Current Blocker
 
@@ -144,8 +154,8 @@ reference or context rubric.
 
 ### Next Move
 
-Start `GAL-82`: add the first RAG reference implementation with the same
-standard structure as the support-agent fixture, including local evals, Galileo
-experiment config, and debug-packet fetch support. Separately, refine `GAL-87`
-into a reference-backed or context-backed policy-answer metric instead of using
-bare correctness as the only signal.
+Draft `GAL-93` and `GAL-94` for the launch package while keeping the
+user-facing Eval Engineer operating model independent of any specific task
+tracker. Separately, start `GAL-82` for the first RAG reference implementation
+and refine `GAL-87` into a reference-backed or context-backed policy-answer
+metric instead of using bare correctness as the only signal.

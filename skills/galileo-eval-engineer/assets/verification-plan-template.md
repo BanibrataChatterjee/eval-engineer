@@ -43,6 +43,13 @@ regress.
 State what must improve, what must not regress, and which grounded evidence will
 prove it.
 
+## Go No-Go
+
+- Keep the change if:
+- Revert or revise if:
+- Required artifacts to save:
+- Residual behavior outside this metric contract:
+
 ## Follow-Up
 
 List candidate eval cases, monitoring queries, or log-stream slices to inspect

@@ -73,6 +73,8 @@
 - [x] Create and close `GAL-89` for the skills eval-loop notes and blog.
 - [x] Create and close `GAL-90` for README framing and draft wording cleanup.
 - [x] Create and close `GAL-91` for README narrative cleanup.
+- [x] Create `GAL-93` for the Eval Engineer launch blog.
+- [x] Create `GAL-94` for Eval Engineer launch graphics.
 
 ## Milestone 4: Skill Knowledge
 
@@ -100,3 +102,9 @@
 - [x] Try Galileo `correctness` without ground truth for the TC-1 final answer
   and fetch the resulting packet (`GAL-87`).
 - [ ] Add the first RAG reference implementation (`GAL-82`).
+
+## Milestone 6: Launch Package
+
+- [ ] Draft the Eval Engineer launch blog (`GAL-93`).
+- [ ] Create launch graphics: architecture diagram and eval-loop diagram
+  (`GAL-94`).

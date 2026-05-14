@@ -33,3 +33,8 @@ State what should not be changed in this iteration.
 ## Risk
 
 Describe likely regressions and what evidence would reveal them.
+
+## Rollback Criteria
+
+State which metric movement, trace behavior, local regression, or missing
+verification artifact would make this change unsafe to keep.

@@ -6,6 +6,12 @@ State the most likely root cause in one or two sentences. Include whether this
 appears to be an app failure, metric issue, dataset issue, integration issue, or
 insufficient-evidence case.
 
+## Classification
+
+- Diagnosis type:
+- Primary fix surface:
+- Confidence:
+
 ## Evidence Source
 
 Name the source type: controlled experiment, production log stream, or mixed.

@@ -75,18 +75,59 @@ def _rationales(packet: dict[str, Any]) -> list[str]:
     return rationales[:3]
 
 
+def _trace_items(packet: dict[str, Any]) -> list[dict[str, Any]]:
+    traces = packet.get("traces")
+    if isinstance(traces, list):
+        return [trace for trace in traces if isinstance(trace, dict)]
+    trace = packet.get("trace")
+    if isinstance(trace, dict):
+        return [trace]
+    return []
+
+
 def _trace_lines(packet: dict[str, Any]) -> list[str]:
     lines = []
-    for trace in packet.get("traces", [])[:5]:
+    for trace in _trace_items(packet)[:5]:
         trace_id = trace.get("trace_id") or trace.get("id") or "<unknown>"
         scores = trace.get("scores") or trace.get("metrics") or {}
+        metric_scores = {
+            key: value
+            for key, value in trace.items()
+            if key.endswith("_quality") or key.endswith("_score") or key.endswith("_rate")
+        }
+        if metric_scores:
+            scores = {**scores, **metric_scores}
+        status = {
+            key: value
+            for key, value in trace.items()
+            if key.endswith("_status") and value is not None
+        }
         notes = trace.get("notes") or trace.get("rationale") or ""
         parts = [f"- {trace_id}"]
         if scores:
             parts.append(f"scores={_compact(scores)}")
+        if status:
+            parts.append(f"status={_compact(status)}")
         if notes:
             parts.append(f"notes={_compact(notes)}")
         lines.append(" | ".join(parts))
+    return lines
+
+
+def _span_count_lines(packet: dict[str, Any]) -> list[str]:
+    span_counts = packet.get("span_counts")
+    if not isinstance(span_counts, dict):
+        return []
+    lines = []
+    total = span_counts.get("total")
+    scored = span_counts.get("scored_tool_selection")
+    if total is not None:
+        lines.append(f"- total: {total}")
+    if scored is not None:
+        lines.append(f"- scored_tool_selection: {scored}")
+    by_type = span_counts.get("by_type")
+    if isinstance(by_type, dict) and by_type:
+        lines.append(f"- by_type: {_compact(by_type)}")
     return lines
 
 
@@ -96,7 +137,9 @@ def summarize(packet: dict[str, Any]) -> str:
     identity = {
         "schema_version": packet.get("schema_version", "<missing>"),
         "project": packet.get("project") or packet.get("project_id") or "<unknown>",
+        "project_id": packet.get("project_id", "<unknown>"),
         "run": packet.get("run_name") or packet.get("experiment_name") or packet.get("run_id") or "<unknown>",
+        "experiment_id": packet.get("experiment_id", "<none>"),
         "agent_type": packet.get("agent_type") or summary.get("agent_type") or "<unknown>",
         "case": dataset.get("case_id") or packet.get("case_id") or "<none>",
     }
@@ -131,6 +174,11 @@ def summarize(packet: dict[str, Any]) -> str:
     if trace_lines:
         lines.append("traces:")
         lines.extend(trace_lines)
+
+    span_count_lines = _span_count_lines(packet)
+    if span_count_lines:
+        lines.append("span_counts:")
+        lines.extend(span_count_lines)
 
     rationales = _rationales(packet)
     if rationales:
