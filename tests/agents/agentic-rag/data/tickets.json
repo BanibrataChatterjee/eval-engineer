@@ -1,0 +1,24 @@
+[
+  {
+    "ticket_id": "T-1001",
+    "account_id": "acct-acme",
+    "title": "Failed ACH debit and enterprise refund request",
+    "status": "open",
+    "text": "Customer reports a failed ACH debit and asks whether a $9,000 refund can be issued. Prior support reply said billing can review after account manager approval."
+  },
+  {
+    "ticket_id": "T-2001",
+    "account_id": "acct-beta",
+    "title": "Legal hold data export request",
+    "status": "open",
+    "text": "A workspace admin asked support to export all user data for legal hold. A junior support note incorrectly promised self-service export would be enough."
+  },
+  {
+    "ticket_id": "T-3001",
+    "account_id": "acct-gamma",
+    "title": "SSO credential rotation request",
+    "status": "open",
+    "text": "Support contact asked to rotate SSO signing keys but is not listed as a workspace admin."
+  }
+]
+

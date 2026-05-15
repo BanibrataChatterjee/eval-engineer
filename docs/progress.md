@@ -130,7 +130,16 @@
   - `GAL-91`: completed README narrative cleanup.
   - `GAL-93`: Eval Engineer launch blog.
   - `GAL-94`: Eval Engineer launch graphics.
-  - `GAL-82`: first RAG reference implementation.
+  - `GAL-95`: completed Galileo tokenomics RCA sub-skill.
+  - `GAL-82`: completed first RAG reference implementation.
+  - `GAL-96`: completed second reference implementation for the tokenomics loop.
+  - `GAL-97`: completed policy RAG Galileo log streams and metrics.
+  - `GAL-98`: completed policy RAG tokenomics cost-reduction loop.
+  - `GAL-99`: completed tokenomics skill improvements from the policy RAG loop.
+  - `GAL-100`: completed tokenomics robustness tests across use cases.
+  - `GAL-101`: completed broader tokenomics robustness across RAG, agent,
+    model-routing, evaluator-cost, and segment-regression scenarios.
+  - `GAL-102`: completed May 14 learning capture in repo notes.
   - `GAL-84`: completed root `AGENTS.md` repo operating instructions.
   - `GAL-85`: completed RCA and Galileo discoverability framing.
 
@@ -141,21 +150,168 @@
 - Created launch-package Linear issues and moved them to In Progress:
   - `GAL-93`: Eval Engineer launch blog.
   - `GAL-94`: Eval Engineer launch graphics.
+- Completed `GAL-95` by adding tokenomics RCA as a sub-workflow inside
+  `skills/galileo-eval-engineer/`. The addition includes
+  `references/tokenomics-rca.md`, cost diagnosis/fix/quality-preserving
+  verification templates, `scripts/compare_tokenomics_packets.py`, and tests.
+  The helper compared the current TC-1 baseline and verification packets as a
+  keep-candidate: `average_cost` decreased about 41%, `average_latency`
+  decreased about 80%, `average_num_total_tokens` decreased about 41%, and
+  `average_tool_selection_quality` improved from `0.0` to `1.0`.
+- Completed `GAL-96` / `GAL-82` by adding a deterministic policy RAG reference
+  implementation under `tests/agents/policy-rag/` with wide and focused
+  retrieval modes, three policy-answer cases, local scoring, and local
+  tokenomics estimates.
+- Completed `GAL-97` by creating Galileo log streams for both policy RAG modes:
+  `policy-rag-tokenomics-wide-v2-20260514T1505Z`
+  (`b31b8f3b-89a0-4ccc-ae46-25db867b8b47`) and
+  `policy-rag-tokenomics-focused-v2-20260514T1505Z`
+  (`99d60440-7862-4602-9dac-3529f14e5d01`). Enabled
+  `context_adherence`, `context_relevance`, and `completeness`.
+- Completed `GAL-98` by using the tokenomics RCA helper to compare fetched
+  Galileo packets. Focused retrieval reduced `average_cost` by about 41%,
+  `average_num_input_tokens` by about 58%, `average_num_total_tokens` by about
+  53%, and `average_latency` by about 52%, while
+  `average_completeness_gpt`, `average_groundedness`, and
+  `average_context_relevance` stayed at `1.0`.
+- Completed `GAL-99` by folding the policy RAG loop back into the skill
+  artifacts: small cost values now render with significant digits in
+  `compare_tokenomics_packets.py`, the policy RAG fetcher aggregates
+  tokenomics metrics from fetched traces/spans, and the durable learning notes
+  now require Galileo quality gates for tokenomics changes.
+- Recorded the policy RAG tokenomics RCA at
+  `tests/agents/policy-rag/galileo/reports/tokenomics-rca-2026-05-14.md`.
+- Completed `GAL-100` after reviewing whether the policy RAG tokenomics test was
+  sufficient. The review found it was too happy-path-heavy: it did not cover
+  lower-is-better quality metrics such as `tool_error_rate`, quality regression
+  rejection, or traffic-volume-only comparisons. Added failing pressure tests
+  for those cases before patching the comparison helper.
+- Improved `compare_tokenomics_packets.py` for `GAL-100`: it now records quality
+  metric direction, treats `tool_error_rate`-style metrics as lower-is-better,
+  rejects cost wins that increase lower-is-better quality metrics, and does not
+  keep a candidate when only `total_responses` drops without efficiency evidence.
+- Completed `GAL-101` by adding curated tokenomics pressure scenarios under
+  `tests/skills/fixtures/tokenomics-scenarios.json` and broadening the compare
+  helper beyond the policy RAG happy path. The new coverage includes agent
+  tool/retry-loop efficiency, RAG pruning quality regression, evaluator-cost
+  sampling, model-routing span reduction, and hidden segment-level quality
+  regression despite aggregate quality holding.
+- `compare_tokenomics_packets.py` now recognizes broader efficiency metrics
+  such as span counts, tool-call counts, retry counts, retrieved context tokens,
+  evaluator cost, sampling rate, and model span counts. It also compares shared
+  segment quality metrics and rejects candidates with segment regressions.
+- Completed `GAL-102` by expanding
+  `notes/2026-05-14/launch-and-skill-expansion.md` with the day's durable
+  learnings: launch framing, keeping Linear out of the user-facing operating
+  model, tokenomics evidence contracts, policy RAG live log-stream evidence,
+  why the first focused retrieval attempt failed, why curated packet fixtures
+  matter, and the broader robustness model across RAG, agents, model routing,
+  evaluator sampling, and segments.
+- Completed `GAL-103` by making the policy RAG fixture harder with six cases,
+  including multi-source enterprise refund, legal-hold export, and promotional
+  trial-extension denial cases. The naive `focused` candidate cut average cost
+  by about 52% but was rejected because local answer quality dropped from `1.0`
+  to `0.8111` and segments such as enterprise refund regressed. The `balanced`
+  candidate cut average cost by about 44%, input tokens by about 62%, and total
+  tokens by about 56% while preserving all hard-suite quality segments at
+  `1.0`.
+- Created hard-suite Galileo log streams:
+  `policy-rag-hard-wide-20260514T1640Z`
+  (`3828b1e4-3eb3-4f35-b805-372a3de1dd43`),
+  `policy-rag-hard-focused-20260514T1640Z`
+  (`1180ffc1-dc66-4673-ba0b-052a00326db3`), and
+  `policy-rag-hard-balanced-20260514T1640Z`
+  (`6f54d537-f2b4-4edd-988e-c763e7f8d1ce`).
+- Added hard-suite curated tokenomics fixtures:
+  `hard-wide-baseline-debug-packet.json`,
+  `hard-focused-risky-debug-packet.json`, and
+  `hard-balanced-verification-debug-packet.json`.
+- Updated the tokenomics skill reference, repo agent instructions, Galileo
+  learnings, policy RAG README, RCA report, and May 14 notes with the new rule:
+  RAG retrieval pruning needs hard multi-source or multi-hop evidence before a
+  cost win is accepted.
 
 ### Current Blocker
 
-The `tool_selection_quality` metric and trace-fetch gates are now passed.
-`claude-sonnet-4-6` is the canonical Anthropic model for the reference agent.
-The skill is now framed as a general Galileo evidence and RCA workflow. The
-first diagnose-fix-verify loop is complete for tool selection. A first
-correctness-without-ground-truth trial works mechanically and returns
-`average_factuality`, but it is a coarse answer-quality signal without a
-reference or context rubric.
+No current blocker for the policy RAG tokenomics loop. The next open product
+work is launch content, live non-RAG agent tool-loop tokenomics evidence, and
+stronger policy-answer metrics beyond bare correctness.
 
 ### Next Move
 
 Draft `GAL-93` and `GAL-94` for the launch package while keeping the
 user-facing Eval Engineer operating model independent of any specific task
-tracker. Separately, start `GAL-82` for the first RAG reference implementation
-and refine `GAL-87` into a reference-backed or context-backed policy-answer
-metric instead of using bare correctness as the only signal.
+tracker. Separately, refine `GAL-87` into a reference-backed or context-backed
+policy-answer metric instead of using bare correctness as the only signal, and
+plan a live agent tool-loop run for the broader tokenomics skill scenarios.
+
+## 2026-05-15
+
+### Done
+
+- Completed `GAL-104` by adding a realistic agentic RAG case-resolution fixture
+  under `tests/agents/agentic-rag/`. The fixture includes cached embeddings,
+  account lookup, ticket search, audit-log inspection, embedding retrieval,
+  reranking, self-checking, structured decisions, and deterministic scoring
+  across the initial eight hard cases.
+- Created final Galileo log streams with cached OpenAI embeddings:
+  `agentic-rag-baseline-safe-20260515T1024Z`
+  (`a43a6f1a-d7fb-4335-ad69-5a9bfd07927c`),
+  `agentic-rag-cheap-unsafe-20260515T1024Z`
+  (`929bdd8e-bc5f-4a29-ac2c-8ecc6a50bcbe`), and
+  `agentic-rag-adaptive-20260515T1024Z`
+  (`214f2b90-72a4-4e0e-81ae-b096e2fd612c`).
+- Initial tokenomics result: `cheap_unsafe` cut average cost by about 68% but
+  was rejected because average case success dropped from `1.0` to `0.25`.
+  `adaptive` cut average cost by about 22% while preserving the named quality
+  gates at `1.0`.
+- Improved the tokenomics comparison helper and skill reference so agentic
+  efficiency fields such as `agent_steps`, `rerank`, `planner`, `reflection`,
+  and `self_check` are treated as first-class efficiency evidence.
+- Completed `GAL-105` by expanding the agentic RAG fixture from 8 to 14 cases
+  to cover unclear export,
+  malicious credential social engineering, PII disclosure, brand-damage,
+  multi-source information integration, and counterfactual untrusted context.
+- Tightened the Galileo metric contract for the agentic RAG fixture:
+  `context_adherence`, `chunk_attribution_utilization`, `correctness`,
+  `ground_truth_adherence`, `agent_efficiency`, `agent_flow`, PII, toxicity,
+  and tone metrics are now represented in the case metric profiles.
+- Updated the log-stream runner to attach the full expected-output contract to
+  `dataset_output` for each case instead of a generic quality-contract string.
+- Rebuilt the curated agentic RAG tokenomics packets for the expanded 14-case
+  suite. The risky `cheap_unsafe` candidate now cuts cost by about 70% but
+  drops case success to `0.142857`; the `adaptive` candidate cuts cost by about
+  22%, total tokens by about 23%, and retrieved context tokens by about 28%
+  while preserving all named quality gates at `1.0`.
+- Ran the expanded Galileo log-stream pass after a one-case metric-profile
+  smoke test:
+  `agentic-rag-metric-profile-smoke-20260515T1100Z`
+  (`af5c80cc-a56f-4de5-b64b-155836eaa8ab`),
+  `agentic-rag-tokenomics-baseline_safe-20260515T105324Z`
+  (`0f13cd38-01a7-4bcf-a1f8-77ac7720e62c`),
+  `agentic-rag-tokenomics-cheap_unsafe-20260515T105348Z`
+  (`66479ff0-e0fa-4129-a2bf-df73a017898f`), and
+  `agentic-rag-tokenomics-adaptive-20260515T105434Z`
+  (`beb56226-8525-4cb7-9038-391c49d5e263`).
+- Hardened the local embedding cache against partial JSON reads and atomic
+  writes after parallel fixture regeneration exposed a shared-cache race.
+- Completed `GAL-106` by adding a reusable metric-profile checklist and
+  template inside the Eval Engineer skill. Future tokenomics/RAG/agent work now
+  has an explicit pre-optimization gate for `risk_profile`,
+  `quality_dimensions`, `galileo_metrics`, expected-output contracts,
+  quality/safety/performance/cost metrics, segment-level acceptance gates, and
+  metric gaps.
+- Recorded the RCA at
+  `tests/agents/agentic-rag/galileo/reports/tokenomics-rca-2026-05-15.md` and
+  notes at `notes/2026-05-15/agentic-rag-tokenomics.md`.
+
+### Current Blocker
+
+No blocker for the agentic RAG tokenomics loop.
+
+### Next Move
+
+Use the expanded agentic RAG fixture as the main demo substrate for the
+tokenomics skill. Next, fetch scored Galileo metric results for the expanded
+log streams when scorer jobs settle. Consider a small live-generation lane
+later for final-answer prose variance.

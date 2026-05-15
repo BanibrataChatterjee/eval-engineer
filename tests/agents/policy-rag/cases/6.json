@@ -1,0 +1,8 @@
+{
+  "id": "RAG-6",
+  "category": "trial_extension",
+  "question": "Can a Pro trial that already received a promotional extension 60 days ago get more time?",
+  "expected_answer_terms": ["not available", "promotional extension", "last 90 days"],
+  "expected_source_ids": ["trial-extension"]
+}
+

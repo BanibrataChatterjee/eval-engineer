@@ -66,7 +66,7 @@
 - [x] Create `GAL-79` for behavioral fixture tests.
 - [x] Create `GAL-80` for all-case local support-agent eval.
 - [x] Create `GAL-81` for all-case Galileo support-agent eval.
-- [x] Create `GAL-82` for the first RAG reference implementation.
+- [x] Create and close `GAL-82` for the first RAG reference implementation.
 - [x] Create and close `GAL-84` for root `AGENTS.md`.
 - [x] Create and close `GAL-85` for RCA and Galileo discoverability framing.
 - [x] Create and close `GAL-88` for the first generalized Galileo RCA recipe.
@@ -75,6 +75,21 @@
 - [x] Create and close `GAL-91` for README narrative cleanup.
 - [x] Create `GAL-93` for the Eval Engineer launch blog.
 - [x] Create `GAL-94` for Eval Engineer launch graphics.
+- [x] Create and close `GAL-95` for the Galileo tokenomics RCA sub-skill.
+- [x] Create and close `GAL-96` for the second reference implementation.
+- [x] Create and close `GAL-97` for policy RAG Galileo log streams and metrics.
+- [x] Create and close `GAL-98` for the policy RAG tokenomics cost-reduction loop.
+- [x] Create and close `GAL-99` for tokenomics skill improvements from the new loop.
+- [x] Create and close `GAL-100` for tokenomics robustness tests across use cases.
+- [x] Create and close `GAL-101` for broader tokenomics use-case robustness.
+- [x] Create and close `GAL-102` for documenting May 14 learnings in notes.
+- [x] Create and close `GAL-103` for the harder policy RAG tokenomics suite.
+- [x] Create and close `GAL-104` for the agentic RAG case-resolution tokenomics
+  reference.
+- [x] Create and close `GAL-105` for hardening agentic RAG metric coverage and
+  production-risk scenarios.
+- [x] Create and close `GAL-106` for the reusable Eval Engineer metric-profile
+  checklist.
 
 ## Milestone 4: Skill Knowledge
 
@@ -89,6 +104,12 @@
 - [x] Keep Galileo SDK details in references and scripts, not in the core skill.
 - [x] Teach skill artifacts to preserve grounded Galileo links for RCA workflows.
 - [x] Start a generalized Galileo RCA recipe from diagnose-fix-verify learnings.
+- [x] Add tokenomics RCA as a sub-workflow for cost, latency, token, retrieval,
+  tool, model-routing, and evaluator-cost reduction (`GAL-95`).
+- [x] Add a reusable metric-profile checklist and template so future eval,
+  tokenomics, RAG, and agent work defines risk profile, expected-output
+  contract, quality/safety/performance metrics, cost metrics, segment gates,
+  and metric gaps before optimizing (`GAL-106`).
 
 ## Milestone 5: Expand After One Sample Works
 
@@ -101,7 +122,31 @@
   without hardcoding the fixture (`GAL-86`).
 - [x] Try Galileo `correctness` without ground truth for the TC-1 final answer
   and fetch the resulting packet (`GAL-87`).
-- [ ] Add the first RAG reference implementation (`GAL-82`).
+- [x] Add the first RAG reference implementation (`GAL-82`, `GAL-96`).
+- [x] Create Galileo log streams and metric evidence for the policy RAG
+  reference implementation (`GAL-97`).
+- [x] Use the tokenomics RCA sub-skill to reduce policy RAG cost while
+  preserving Galileo quality metrics (`GAL-98`).
+- [x] Capture tokenomics skill improvements from the policy RAG loop
+  (`GAL-99`).
+- [x] Expand tokenomics skill robustness tests across RAG and agent use cases
+  (`GAL-100`).
+- [x] Broaden tokenomics skill coverage across RAG retrieval pruning, agent
+  tool/retry loops, model routing, evaluator-cost sampling, and segment-level
+  regressions (`GAL-101`).
+- [x] Document May 14 launch, tokenomics, policy RAG, and robustness learnings
+  in `notes/2026-05-14/launch-and-skill-expansion.md` (`GAL-102`).
+- [x] Make the policy RAG fixture harder with multi-source cases, reject the
+  unsafe top-1 retrieval candidate, keep the balanced candidate, and fold the
+  RAG source-coverage learning back into the skill (`GAL-103`).
+- [x] Add a realistic agentic RAG case-resolution fixture with account, ticket,
+  audit, retrieval, rerank, and self-check spans; reject the unsafe cheap mode;
+  keep the adaptive mode; and update tokenomics skill coverage for agent-step,
+  rerank, planner, and self-check efficiency (`GAL-104`).
+- [x] Expand the agentic RAG fixture to 14 cases with case-specific Galileo
+  metric profiles, full expected-output contracts, and production-risk coverage
+  across ambiguity, privacy, malicious use, brand safety, information
+  integration, and counterfactual context (`GAL-105`).
 
 ## Milestone 6: Launch Package
 

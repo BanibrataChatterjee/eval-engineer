@@ -1,0 +1,19 @@
+[
+  {
+    "account_id": "acct-beta",
+    "user_id": "user-betty-admin",
+    "events": [
+      "2026-05-10 identity verified by compliance",
+      "2026-05-12 legal hold request opened"
+    ]
+  },
+  {
+    "account_id": "acct-gamma",
+    "user_id": "user-gary-support",
+    "events": [
+      "2026-05-11 viewed SSO settings",
+      "2026-05-11 denied admin-only credential access"
+    ]
+  }
+]
+

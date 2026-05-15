@@ -1,0 +1,8 @@
+{
+  "id": "RAG-5",
+  "category": "legal_hold_export",
+  "question": "Can an admin export data for legal hold, or does compliance need to handle it?",
+  "expected_answer_terms": ["legal hold", "compliance", "not self-serve"],
+  "expected_source_ids": ["security-data", "privacy-export"]
+}
+

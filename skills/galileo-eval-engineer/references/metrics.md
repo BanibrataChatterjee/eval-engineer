@@ -15,6 +15,13 @@ What behavior are we trying to improve or verify?
 ```
 
 Then choose the smallest metric set that directly measures that behavior.
+For test suites, write a case-specific metric profile using
+`references/metric-profile-checklist.md` and pass the
+full expected-output contract to Galileo. The contract should include expected
+decision, required
+and forbidden citations, required tools, answer constraints,
+abstention/permission requirements, risk profile, and quality dimensions. A
+generic "quality" string is not enough for grounded RCA.
 
 Examples:
 
@@ -66,6 +73,11 @@ closed-domain hallucination.
 - `context_relevance`
 - `context_precision`
 - `chunk_attribution_utilization`
+
+Use `context_relevance` to decide whether retrieval found enough context.
+Use `context_adherence` to decide whether the answer stayed grounded in that
+context. Use `chunk_attribution_utilization` when the RCA needs to know which
+retrieved chunks influenced the answer or whether useful chunks were ignored.
 
 ### Safety, Security, And Style
 
@@ -144,3 +156,10 @@ agent/tool metrics:
 
 Those metrics are fixture-specific, not a general recommendation for all Eval
 Engineer use cases.
+
+The agentic RAG fixture uses a broader profile because it tests ambiguity,
+privacy, malicious use, prompt injection, stale sources, brand tone,
+multi-source integration, counterfactual context, tool flow, and cost. That is
+the pattern to copy: map each case to the metrics that can actually detect its
+failure mode, then compare cost changes only against the relevant quality and
+safety gates.

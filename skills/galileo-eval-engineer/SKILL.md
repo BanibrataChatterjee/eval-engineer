@@ -31,6 +31,11 @@ replace the model's general debugging ability with a fixed failure taxonomy.
 3. **Diagnose from Galileo concepts.**
    - Use metrics to identify what degraded.
    - Use traces/spans to identify where behavior diverged.
+   - For new eval cases, fixture expansion, or tokenomics work, use
+     `references/metric-profile-checklist.md` before changing behavior.
+   - For cost, latency, or token-efficiency work, use
+     `references/tokenomics-rca.md` and compare cost evidence against quality
+     metrics before proposing optimization.
    - Check whether the issue is in the app, the test case, the metric, or the
      Galileo integration before proposing code changes.
    - Use the RCA recipe in `references/rca-recipe.md` to select the smallest
@@ -85,8 +90,16 @@ replace the model's general debugging ability with a fixed failure taxonomy.
 - Debug packet schema and usage: `references/debug-packets.md`
 - Galileo evidence sources: `references/galileo-sources.md`
 - Galileo metric selection: `references/metrics.md`
+- Metric-profile checklist for cases and segments:
+  `references/metric-profile-checklist.md`
 - Galileo experiment wiring: `references/galileo-experiments.md`
 - General RCA recipe: `references/rca-recipe.md`
+- Tokenomics RCA for cost, latency, and token reduction:
+  `references/tokenomics-rca.md`
 - Output artifact templates: `assets/diagnosis-template.md`,
-  `assets/fix-plan-template.md`, `assets/verification-plan-template.md`
+  `assets/fix-plan-template.md`, `assets/verification-plan-template.md`,
+  `assets/cost-diagnosis-template.md`,
+  `assets/tokenomics-fix-plan-template.md`,
+  `assets/quality-preserving-verification-template.md`,
+  `assets/metric-profile-template.md`
 - Repo plan/status context: `docs/plan.md`, `docs/tasks.md`, `docs/progress.md`

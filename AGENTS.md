@@ -44,6 +44,16 @@ The north-star loop is:
 - Keep `SKILL.md` general across agents, RAG, workflows, metrics, and providers.
 - Keep RCA outputs grounded in trace, span, session, metric, dataset, and
   experiment evidence.
+- For reference fixtures, give each case a risk profile, quality dimensions,
+  and case-specific Galileo metric profile. Do not rely on one global metric
+  list to prove safety, quality, performance, and cost across all cases.
+- Use `skills/galileo-eval-engineer/references/metric-profile-checklist.md`
+  and `skills/galileo-eval-engineer/assets/metric-profile-template.md` before
+  optimizing cost or adding broad fixture coverage.
+- When logging test-suite cases to Galileo, include the full expected-output
+  contract in `dataset_output`: expected decision, required/forbidden citations,
+  required tools, answer constraints, abstention/permission requirements, risk
+  profile, quality dimensions, and intended metrics.
 - Use `skills/galileo-eval-engineer/references/rca-recipe.md` for generalized
   diagnose-fix-verify work and update it when a reusable Galileo RCA pattern is
   discovered.
@@ -79,6 +89,22 @@ For the generic packet summarizer:
 python3 skills/galileo-eval-engineer/scripts/summarize_debug_packet.py tests/skills/fixtures/generic-rag-debug-packet.json
 ```
 
+For tokenomics before/after packet comparison:
+
+```bash
+python3 skills/galileo-eval-engineer/scripts/compare_tokenomics_packets.py .galileo/current/debug-packet.json .galileo/current/verification-debug-packet.json --quality-metrics average_tool_selection_quality,tool_error_rate,average_completeness_gpt,average_groundedness --lower-is-better-quality-metrics tool_error_rate
+```
+
+For tokenomics work, compare cost, latency, and token movement against Galileo
+quality metrics. Do not keep a cost reduction on local scoring alone, and do
+not treat lower traffic volume as a per-trace efficiency improvement. Check
+segment metrics when available before accepting an aggregate cost win. For RAG
+retrieval pruning, include at least one hard multi-source or multi-hop case so
+top-1 retrieval shortcuts cannot pass on easy single-document questions alone.
+For agentic workflows, also compare agent steps, planner spans, rerank passes,
+self-check spans, and tool calls so an adaptive optimization shows which part
+of the loop got cheaper.
+
 Use live model or Galileo calls only when the task explicitly requires runtime
 verification. Do not print secret values.
 
@@ -96,7 +122,8 @@ changes. There are no repo hooks for this.
 Current active planning issues:
 
 - `GAL-87`: answer-quality check for policy explanation correctness.
-- `GAL-82`: add first RAG reference implementation.
+- `GAL-93`: Eval Engineer launch blog.
+- `GAL-94`: Eval Engineer launch graphics.
 
 ## Secrets And Generated Files
 

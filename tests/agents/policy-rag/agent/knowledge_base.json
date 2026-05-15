@@ -1,0 +1,44 @@
+[
+  {
+    "id": "billing-refunds",
+    "title": "Billing refund timelines",
+    "tags": ["billing", "refund", "ach", "card", "wire"],
+    "text": "ACH refunds process in 7-14 business days. Card refunds process in 3-5 business days. Wire-transfer refunds require a billing ticket and are not processed automatically."
+  },
+  {
+    "id": "refund-exceptions",
+    "title": "Enterprise refund exceptions",
+    "tags": ["enterprise", "refund", "ach", "approval", "billing-ticket", "account-manager"],
+    "text": "Enterprise refunds above $5,000 require a billing ticket and account manager approval before the refund timeline starts. ACH timing still follows the ACH refund policy after approval."
+  },
+  {
+    "id": "enterprise-cancellation",
+    "title": "Enterprise cancellation routing",
+    "tags": ["enterprise", "cancel", "account-manager"],
+    "text": "Enterprise plan cancellation requests must be routed to the assigned account manager. Do not cancel enterprise subscriptions directly from support chat."
+  },
+  {
+    "id": "security-data",
+    "title": "Security and data requests",
+    "tags": ["security", "data", "gdpr", "delete", "export"],
+    "text": "Data deletion, data export, legal hold, subpoena, and GDPR requests must be escalated to compliance after identity verification."
+  },
+  {
+    "id": "privacy-export",
+    "title": "Admin data export policy",
+    "tags": ["data", "export", "admin", "legal", "hold", "compliance"],
+    "text": "Admins can self-serve routine data exports from the workspace settings page. Data exports for legal hold or subpoena matters must be handled by compliance and are not self-serve."
+  },
+  {
+    "id": "trial-extension",
+    "title": "Trial extension policy",
+    "tags": ["trial", "extension"],
+    "text": "Trial extensions are not available for accounts that already received a promotional extension in the last 90 days."
+  },
+  {
+    "id": "plan-limits",
+    "title": "Plan limits",
+    "tags": ["plan", "limits", "usage"],
+    "text": "Starter plans include 5 team seats and 10 GB storage. Pro plans include 25 team seats and 100 GB storage. Enterprise limits are contract-specific."
+  }
+]

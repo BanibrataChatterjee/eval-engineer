@@ -13,7 +13,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SKILL_DIR = ROOT / "skills" / "galileo-eval-engineer"
 SUMMARIZER = SKILL_DIR / "scripts" / "summarize_debug_packet.py"
+TOKENOMICS_COMPARE = SKILL_DIR / "scripts" / "compare_tokenomics_packets.py"
 ASSETS_DIR = SKILL_DIR / "assets"
+TOKENOMICS_SCENARIOS = ROOT / "tests" / "skills" / "fixtures" / "tokenomics-scenarios.json"
 
 
 def _load_summarizer():
@@ -22,6 +24,19 @@ def _load_summarizer():
     assert spec.loader is not None
     spec.loader.exec_module(module)
     return module
+
+
+def _load_tokenomics_compare():
+    spec = importlib.util.spec_from_file_location("compare_tokenomics_packets", TOKENOMICS_COMPARE)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module
+
+
+def _tokenomics_scenario(name: str) -> dict:
+    scenarios = json.loads(TOKENOMICS_SCENARIOS.read_text(encoding="utf-8"))
+    return scenarios[name]
 
 
 class GalileoEvalEngineerSkillTest(unittest.TestCase):
@@ -174,6 +189,8 @@ class GalileoEvalEngineerSkillTest(unittest.TestCase):
 
         required_terms = [
             "choose metrics from the failure contract",
+            "case-specific metric profile",
+            "full expected-output contract",
             "Response Quality",
             "RAG And Context Use",
             "Safety, Security, And Style",
@@ -184,6 +201,357 @@ class GalileoEvalEngineerSkillTest(unittest.TestCase):
         ]
         for term in required_terms:
             self.assertIn(term, metrics_text)
+
+    def test_metric_profile_checklist_is_discoverable(self) -> None:
+        skill_text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
+        checklist_text = (SKILL_DIR / "references" / "metric-profile-checklist.md").read_text(encoding="utf-8")
+        template_text = (ASSETS_DIR / "metric-profile-template.md").read_text(encoding="utf-8")
+
+        self.assertIn("references/metric-profile-checklist.md", skill_text)
+        self.assertIn("assets/metric-profile-template.md", skill_text)
+        self.assertIn("references/metric-profile-checklist.md", (SKILL_DIR / "references" / "tokenomics-rca.md").read_text(encoding="utf-8"))
+
+        required_terms = [
+            "Do not optimize cost before this checklist is complete",
+            "risk_profile",
+            "quality_dimensions",
+            "galileo_metrics",
+            "expected_decision",
+            "required_citations",
+            "forbidden_citations",
+            "required_tools",
+            "forbidden_answer_terms",
+            "must_abstain",
+            "Safety And Compliance",
+            "RAG Grounding",
+            "Agent Performance",
+            "Cost And Latency",
+            "segment-level acceptance gate",
+            "metric gap",
+        ]
+        for term in required_terms:
+            self.assertIn(term, checklist_text)
+
+        template_terms = [
+            "Case Or Segment",
+            "Risk Profile",
+            "Expected Output Contract",
+            "Metric Profile",
+            "Acceptance Gate",
+            "Cost Metrics",
+            "Missing Metrics",
+        ]
+        for term in template_terms:
+            self.assertIn(term, template_text)
+
+    def test_tokenomics_subskill_is_discoverable_and_general(self) -> None:
+        skill_text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
+        tokenomics_text = (SKILL_DIR / "references" / "tokenomics-rca.md").read_text(encoding="utf-8")
+
+        self.assertIn("references/tokenomics-rca.md", skill_text)
+        self.assertIn("assets/cost-diagnosis-template.md", skill_text)
+        self.assertIn("assets/tokenomics-fix-plan-template.md", skill_text)
+        self.assertIn("assets/quality-preserving-verification-template.md", skill_text)
+
+        required_terms = [
+            "RAG",
+            "agent",
+            "average_cost",
+            "average_latency",
+            "average_num_input_tokens",
+            "multi-hop",
+            "case-level",
+            "retriever",
+            "tool",
+            "model routing",
+            "metric sampling",
+            "segment",
+            "agent steps",
+            "rerank",
+            "self-check",
+            "agent tool loops",
+            "evaluator cost",
+            "quality metrics do not regress",
+            "Do not rely on local deterministic scoring alone",
+            "lower-is-better",
+            "traffic volume",
+            "scripts/compare_tokenomics_packets.py",
+        ]
+        for term in required_terms:
+            self.assertIn(term, tokenomics_text)
+
+    def test_tokenomics_templates_preserve_quality_gate_shape(self) -> None:
+        expected = {
+            "cost-diagnosis-template.md": [
+                "Cost Signals",
+                "Quality Contract",
+                "Cost Driver",
+                "Evidence Links",
+                "Uncertainty",
+            ],
+            "tokenomics-fix-plan-template.md": [
+                "Bounded Change",
+                "Evidence Behind The Change",
+                "Quality Guardrail",
+                "Expected Cost Movement",
+                "Rollback Criteria",
+            ],
+            "quality-preserving-verification-template.md": [
+                "Cost Comparison",
+                "Quality Gates",
+                "Go No-Go",
+                "cost delta",
+                "quality metric delta",
+            ],
+        }
+
+        for filename, required_terms in expected.items():
+            text = (ASSETS_DIR / filename).read_text(encoding="utf-8")
+            for term in required_terms:
+                self.assertIn(term, text, f"{term} missing from {filename}")
+
+    def test_tokenomics_compare_keeps_when_cost_improves_and_quality_holds(self) -> None:
+        module = _load_tokenomics_compare()
+        baseline = {
+            "experiment_name": "baseline",
+            "aggregate_metrics": {
+                "average_cost": 10.0,
+                "average_latency": 100.0,
+                "average_num_input_tokens": 1000.0,
+                "average_tool_selection_quality": 0.8,
+            },
+        }
+        verification = {
+            "experiment_name": "verification",
+            "aggregate_metrics": {
+                "average_cost": 6.0,
+                "average_latency": 70.0,
+                "average_num_input_tokens": 700.0,
+                "average_tool_selection_quality": 0.8,
+            },
+        }
+
+        result = module.compare(baseline, verification, ["average_tool_selection_quality"])
+
+        self.assertEqual(result["decision"], "keep-candidate: cost evidence improved and quality did not regress")
+        self.assertEqual(result["cost"]["average_cost"]["delta"], -4.0)
+        self.assertEqual(result["quality"]["average_tool_selection_quality"]["delta"], 0.0)
+
+    def test_tokenomics_compare_rejects_when_higher_is_better_quality_drops(self) -> None:
+        module = _load_tokenomics_compare()
+        baseline = {
+            "experiment_name": "baseline",
+            "aggregate_metrics": {
+                "average_cost": 10.0,
+                "average_groundedness": 0.95,
+            },
+        }
+        verification = {
+            "experiment_name": "verification",
+            "aggregate_metrics": {
+                "average_cost": 6.0,
+                "average_groundedness": 0.80,
+            },
+        }
+
+        result = module.compare(baseline, verification, ["average_groundedness"])
+
+        self.assertEqual(result["decision"], "reject: quality regressed")
+        self.assertEqual(result["quality"]["average_groundedness"]["delta"], -0.1499999999999999)
+
+    def test_tokenomics_compare_keeps_when_lower_is_better_quality_improves(self) -> None:
+        module = _load_tokenomics_compare()
+        baseline = {
+            "experiment_name": "baseline",
+            "aggregate_metrics": {
+                "average_cost": 10.0,
+                "tool_error_rate": 0.20,
+            },
+        }
+        verification = {
+            "experiment_name": "verification",
+            "aggregate_metrics": {
+                "average_cost": 6.0,
+                "tool_error_rate": 0.05,
+            },
+        }
+
+        result = module.compare(baseline, verification, ["tool_error_rate"])
+
+        self.assertEqual(result["decision"], "keep-candidate: cost evidence improved and quality did not regress")
+        self.assertEqual(result["quality"]["tool_error_rate"]["direction"], "lower_is_better")
+
+    def test_tokenomics_compare_rejects_when_lower_is_better_quality_increases(self) -> None:
+        module = _load_tokenomics_compare()
+        baseline = {
+            "experiment_name": "baseline",
+            "aggregate_metrics": {
+                "average_cost": 10.0,
+                "tool_error_rate": 0.05,
+            },
+        }
+        verification = {
+            "experiment_name": "verification",
+            "aggregate_metrics": {
+                "average_cost": 6.0,
+                "tool_error_rate": 0.20,
+            },
+        }
+
+        result = module.compare(baseline, verification, ["tool_error_rate"])
+
+        self.assertEqual(result["decision"], "reject: quality regressed")
+        self.assertEqual(result["quality"]["tool_error_rate"]["direction"], "lower_is_better")
+
+    def test_tokenomics_compare_is_inconclusive_when_only_traffic_volume_drops(self) -> None:
+        module = _load_tokenomics_compare()
+        baseline = {
+            "experiment_name": "baseline",
+            "aggregate_metrics": {
+                "total_responses": 100.0,
+                "average_completeness_gpt": 1.0,
+            },
+        }
+        verification = {
+            "experiment_name": "verification",
+            "aggregate_metrics": {
+                "total_responses": 50.0,
+                "average_completeness_gpt": 1.0,
+            },
+        }
+
+        result = module.compare(baseline, verification, ["average_completeness_gpt"])
+
+        self.assertEqual(result["decision"], "inconclusive: quality held but efficiency evidence did not improve")
+        self.assertEqual(result["cost"]["total_responses"]["classification"], "traffic_or_volume")
+
+    def test_tokenomics_compare_renders_small_cost_values_readably(self) -> None:
+        module = _load_tokenomics_compare()
+        baseline = {
+            "experiment_name": "baseline",
+            "aggregate_metrics": {
+                "average_cost": 0.00003985,
+                "average_latency": 18_672_583.333333332,
+                "average_completeness_gpt": 1.0,
+            },
+        }
+        verification = {
+            "experiment_name": "verification",
+            "aggregate_metrics": {
+                "average_cost": 0.0000235,
+                "average_latency": 8_919_805.5,
+                "average_completeness_gpt": 1.0,
+            },
+        }
+
+        result = module.compare(baseline, verification, ["average_completeness_gpt"])
+        markdown = module.render_markdown(result)
+
+        self.assertIn("3.985e-05", markdown)
+        self.assertIn("2.35e-05", markdown)
+        self.assertNotIn("0.000000", markdown)
+
+    def test_tokenomics_compare_agent_tool_loop_uses_span_and_retry_efficiency(self) -> None:
+        module = _load_tokenomics_compare()
+        scenario = _tokenomics_scenario("agent_tool_loop")
+
+        result = module.compare(
+            scenario["baseline"],
+            scenario["verification"],
+            scenario["quality_metrics"],
+        )
+
+        self.assertEqual(result["decision"], "keep-candidate: cost evidence improved and quality did not regress")
+        self.assertEqual(result["cost"]["average_llm_span_count"]["classification"], "efficiency")
+        self.assertEqual(result["cost"]["average_tool_call_count"]["delta"], -4.0)
+        self.assertEqual(result["cost"]["average_retry_count"]["delta"], -1.5)
+        self.assertEqual(result["quality"]["tool_error_rate"]["direction"], "lower_is_better")
+
+    def test_tokenomics_compare_agentic_rag_uses_agent_step_efficiency(self) -> None:
+        module = _load_tokenomics_compare()
+        baseline = {
+            "run_name": "baseline",
+            "aggregate_metrics": {
+                "average_agent_steps": 6.0,
+                "average_rerank_count": 1.0,
+                "average_self_check_count": 1.0,
+                "average_case_success": 1.0,
+            },
+        }
+        verification = {
+            "run_name": "adaptive",
+            "aggregate_metrics": {
+                "average_agent_steps": 5.0,
+                "average_rerank_count": 0.75,
+                "average_self_check_count": 0.75,
+                "average_case_success": 1.0,
+            },
+        }
+
+        result = module.compare(baseline, verification, ["average_case_success"])
+
+        self.assertEqual(result["decision"], "keep-candidate: cost evidence improved and quality did not regress")
+        self.assertEqual(result["cost"]["average_agent_steps"]["classification"], "efficiency")
+        self.assertEqual(result["cost"]["average_rerank_count"]["delta"], -0.25)
+        self.assertEqual(result["cost"]["average_self_check_count"]["delta"], -0.25)
+
+    def test_tokenomics_compare_rejects_rag_pruning_quality_regression(self) -> None:
+        module = _load_tokenomics_compare()
+        scenario = _tokenomics_scenario("rag_pruning_regression")
+
+        result = module.compare(
+            scenario["baseline"],
+            scenario["verification"],
+            scenario["quality_metrics"],
+        )
+
+        self.assertEqual(result["decision"], "reject: quality regressed")
+        self.assertEqual(result["cost"]["average_retrieved_context_tokens"]["classification"], "efficiency")
+        self.assertLess(result["quality"]["average_completeness_gpt"]["delta"], 0)
+
+    def test_tokenomics_compare_keeps_evaluator_sampling_cost_reduction(self) -> None:
+        module = _load_tokenomics_compare()
+        scenario = _tokenomics_scenario("evaluator_sampling")
+
+        result = module.compare(
+            scenario["baseline"],
+            scenario["verification"],
+            scenario["quality_metrics"],
+        )
+
+        self.assertEqual(result["decision"], "keep-candidate: cost evidence improved and quality did not regress")
+        self.assertEqual(result["cost"]["average_evaluator_cost"]["delta"], -0.006)
+        self.assertEqual(result["cost"]["metric_sampling_rate"]["classification"], "efficiency")
+
+    def test_tokenomics_compare_keeps_model_routing_when_quality_holds(self) -> None:
+        module = _load_tokenomics_compare()
+        scenario = _tokenomics_scenario("model_routing")
+
+        result = module.compare(
+            scenario["baseline"],
+            scenario["verification"],
+            scenario["quality_metrics"],
+        )
+
+        self.assertEqual(result["decision"], "keep-candidate: cost evidence improved and quality did not regress")
+        self.assertEqual(result["cost"]["average_premium_model_span_count"]["delta"], -2.0)
+
+    def test_tokenomics_compare_rejects_hidden_segment_quality_regression(self) -> None:
+        module = _load_tokenomics_compare()
+        scenario = _tokenomics_scenario("hidden_segment_regression")
+
+        result = module.compare(
+            scenario["baseline"],
+            scenario["verification"],
+            scenario["quality_metrics"],
+        )
+
+        self.assertEqual(result["decision"], "reject: quality regressed")
+        self.assertIn("enterprise", result["segments"])
+        self.assertLess(
+            result["segments"]["enterprise"]["quality"]["average_completeness_gpt"]["delta"],
+            0,
+        )
 
 
 if __name__ == "__main__":
