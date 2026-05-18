@@ -1,13 +1,57 @@
 ---
 name: eval-engineer
-description: Use when debugging or improving AI agents/RAG apps with Galileo evidence. Reads packets, diagnoses failures, writes bounded fix and verification plans, compares runs, and records learnings.
+description: Use when a user needs a front door for Galileo-backed eval work, is unsure which eval command to use, or asks to inspect AI agents/RAG apps with traces, metrics, URLs, or production symptoms.
 ---
 
-# Galileo Eval Engineer
+# Eval Engineer
 
-Use this skill to help a coding agent use Galileo like an eval engineer. The
-skill should ground the model in Galileo evidence and repo-local context, not
-replace the model's general debugging ability with a fixed failure taxonomy.
+Use this skill as the front door for Galileo-backed eval engineering. It should
+educate the user just enough to choose the right workflow, inspect current
+project readiness, and route to the focused command skill that matches the job.
+
+## Current Project State
+
+Start by checking what the user gave you and what the project already has:
+
+- Galileo URL, project/log-stream/experiment/session/trace ID, or symptom
+- `.galileo/config.yml`
+- `.galileo/current/debug-packet.json`
+- `.galileo/current/verification-debug-packet.json`
+- configured verification commands
+- metric profile or expected-output contract
+
+Then report one compact status block:
+
+```text
+Eval Engineer works by closing the loop:
+evidence -> diagnosis -> bounded change -> verification.
+
+Current project state:
+- workspace: ready/missing
+- evidence: ready/missing/ambiguous
+- measurement: ready/missing
+- best next command: /eval-...
+```
+
+Do not dump general docs. Name the smallest useful next step.
+
+## Route
+
+- Use `/eval-setup` when `.galileo/` or verification config is missing.
+- Use `/eval-fetch` when the user provides a Galileo URL/ID or needs evidence
+  pulled into `.galileo/current/debug-packet.json`.
+- Use `/eval-measure` when the question is whether metrics, rubrics, or
+  expected-output contracts are correct.
+- Use `/eval-diagnose` when a debug packet or fetched evidence is ready and the
+  user wants root cause.
+- Use `/eval-cost` when the goal is token, latency, model-routing, tool-loop, or
+  evaluator-cost reduction.
+- Use `/eval-audit` when the user wants a launch, safety, OWASP, security,
+  coverage, or production-readiness review.
+
+If the right route is uncertain, ask one clarifying question. If evidence is
+missing, explain exactly what is missing and how `/eval-fetch` or `/eval-setup`
+will get it.
 
 ## Core Loop
 

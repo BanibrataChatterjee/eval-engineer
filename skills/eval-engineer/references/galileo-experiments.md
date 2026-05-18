@@ -53,6 +53,21 @@ metrics do not appear after traces flush, explicitly create a
 - `stream_metrics=True`.
 - `process_existing_inference_runs=True`.
 
+Do not treat those manually triggered jobs as valid scored evidence until their
+statuses are checked. In the external claim-triage fixture, function-experiment
+scorer jobs repeatedly failed with:
+
+```text
+Unhandled error occurred when downloading object experiment/<project_id>/<experiment_id>/None/inputs.feather
+```
+
+Uploading a real Galileo dataset before running the function experiment still
+produced the same failure. In that state, the experiment is useful only as a
+system-metric artifact for token and latency movement. It is not enough for
+quality, safety, tool, RAG, or prompt-injection RCA. Prefer log streams plus
+compact debug packets for production-style diagnosis until the experiment
+contains the requested scored metrics.
+
 If the installed SDK does not expose a docs-listed constant, use the exact
 metric string only as a temporary compatibility fallback and record it in
 `.galileo/learnings.md`.

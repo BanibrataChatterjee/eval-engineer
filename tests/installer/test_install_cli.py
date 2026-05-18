@@ -25,7 +25,7 @@ def run_cli(args: list[str]) -> int:
 
 
 class EvalEngineerInstallerTest(unittest.TestCase):
-    def test_project_install_copies_codex_and_claude_skills(self) -> None:
+    def test_project_install_copies_codex_and_claude_skill_bundle(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             project_dir = Path(tmpdir) / "sample-project"
             project_dir.mkdir()
@@ -34,11 +34,28 @@ class EvalEngineerInstallerTest(unittest.TestCase):
 
             self.assertEqual(result, 0)
             for base in (project_dir / ".agents", project_dir / ".claude"):
-                skill_dir = base / "skills" / cli.SKILL_NAME
-                self.assertTrue((skill_dir / "SKILL.md").is_file())
-                self.assertTrue((skill_dir / "references" / "tokenomics-rca.md").is_file())
-                self.assertTrue((skill_dir / "scripts" / "summarize_debug_packet.py").is_file())
-                self.assertEqual(skill_dir.name, "eval-engineer")
+                for skill_name in cli.SKILL_NAMES:
+                    skill_dir = base / "skills" / skill_name
+                    self.assertTrue((skill_dir / "SKILL.md").is_file(), skill_dir)
+                core_dir = base / "skills" / "eval-engineer"
+                self.assertTrue((core_dir / "references" / "tokenomics-rca.md").is_file())
+                self.assertTrue((core_dir / "scripts" / "summarize_debug_packet.py").is_file())
+
+    def test_project_install_scaffolds_galileo_workspace_without_overwrite(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            project_dir = Path(tmpdir) / "sample-project"
+            config_path = project_dir / ".galileo" / "config.yml"
+            config_path.parent.mkdir(parents=True)
+            config_path.write_text("agent_type: custom\n", encoding="utf-8")
+
+            result = run_cli(["install", "--target", "codex", "--project-dir", str(project_dir)])
+
+            self.assertEqual(result, 0)
+            self.assertTrue((project_dir / ".galileo" / "current").is_dir())
+            self.assertTrue((project_dir / ".galileo" / "eval-dataset").is_dir())
+            self.assertTrue((project_dir / ".galileo" / "sessions").is_dir())
+            self.assertTrue((project_dir / ".galileo" / "learnings.md").is_file())
+            self.assertEqual(config_path.read_text(encoding="utf-8"), "agent_type: custom\n")
 
     def test_project_install_requires_force_for_existing_skill(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:

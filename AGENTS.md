@@ -84,7 +84,7 @@ After skill changes, run:
 
 ```bash
 PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 -m unittest tests.skills.test_eval_engineer_skill
-python3 /Users/pratik/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/eval-engineer
+for skill in skills/eval-*; do python3 /Users/pratik/.codex/skills/.system/skill-creator/scripts/quick_validate.py "$skill"; done
 ```
 
 For the generic packet summarizer:
@@ -119,6 +119,7 @@ throwaway project:
 PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 -m unittest tests.installer.test_install_cli
 mkdir -p /tmp/eval-engineer-install-test
 uvx --from /Users/pratik/Documents/github/eval-engineer eval-engineer install --target both --scope project --project-dir /tmp/eval-engineer-install-test
+uvx --from /Users/pratik/Documents/github/eval-engineer eval-engineer check --target both --scope project --project-dir /tmp/eval-engineer-install-test
 ```
 
 ## Linear Hygiene

@@ -14,8 +14,18 @@ ROOT = Path(__file__).resolve().parents[2]
 SKILL_DIR = ROOT / "skills" / "eval-engineer"
 SUMMARIZER = SKILL_DIR / "scripts" / "summarize_debug_packet.py"
 TOKENOMICS_COMPARE = SKILL_DIR / "scripts" / "compare_tokenomics_packets.py"
+URL_PARSER = SKILL_DIR / "scripts" / "parse_galileo_url.py"
 ASSETS_DIR = SKILL_DIR / "assets"
 TOKENOMICS_SCENARIOS = ROOT / "tests" / "skills" / "fixtures" / "tokenomics-scenarios.json"
+COMMAND_SKILLS = [
+    "eval-engineer",
+    "eval-setup",
+    "eval-fetch",
+    "eval-measure",
+    "eval-diagnose",
+    "eval-cost",
+    "eval-audit",
+]
 
 
 def _load_summarizer():
@@ -34,12 +44,80 @@ def _load_tokenomics_compare():
     return module
 
 
+def _load_url_parser():
+    spec = importlib.util.spec_from_file_location("parse_galileo_url", URL_PARSER)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module
+
+
 def _tokenomics_scenario(name: str) -> dict:
     scenarios = json.loads(TOKENOMICS_SCENARIOS.read_text(encoding="utf-8"))
     return scenarios[name]
 
 
 class EvalEngineerSkillTest(unittest.TestCase):
+    def test_command_skills_are_distinct_and_share_core_references(self) -> None:
+        descriptions = {}
+        for skill_name in COMMAND_SKILLS:
+            skill_path = ROOT / "skills" / skill_name / "SKILL.md"
+            self.assertTrue(skill_path.is_file(), skill_path)
+            text = skill_path.read_text(encoding="utf-8")
+            self.assertIn(f"name: {skill_name}", text)
+            match = re.search(r"^description:\s*(.+)$", text, flags=re.MULTILINE)
+            self.assertIsNotNone(match, skill_name)
+            description = match.group(1).strip()
+            self.assertLessEqual(len(description), 260)
+            descriptions[skill_name] = description
+
+        self.assertEqual(len(set(descriptions.values())), len(COMMAND_SKILLS))
+
+        expectations = {
+            "eval-engineer": ["front door", "route", "Current Project State"],
+            "eval-setup": [".galileo/config.yml", "Do not guess metrics", "/eval-diagnose"],
+            "eval-fetch": ["Galileo URL", "source.console_url", "project URL", "fetch_ready: true"],
+            "eval-measure": ["metric-profile-checklist.md", "expected-output contract"],
+            "eval-diagnose": ["rca-recipe.md", "fix surface", "Honor read-only requests"],
+            "eval-cost": ["tokenomics-rca.md", "quality metrics do not regress"],
+            "eval-audit": ["OWASP", "Do not fix by default"],
+        }
+        for skill_name, required_terms in expectations.items():
+            text = (ROOT / "skills" / skill_name / "SKILL.md").read_text(encoding="utf-8")
+            for term in required_terms:
+                self.assertIn(term, text, f"{term} missing from {skill_name}")
+
+    def test_galileo_url_parser_handles_console_urls(self) -> None:
+        module = _load_url_parser()
+
+        log_stream = module.parse_galileo_url(
+            "https://console.demo-v2.galileocloud.io/agent-labs/project/"
+            "555caaf8-8a6b-4f15-96bd-2b4e334ca90d/log-streams/"
+            "214f2b90-72a4-4e0e-81ae-b096e2fd612c"
+        )
+        self.assertEqual(log_stream["artifact_type"], "log_stream")
+        self.assertEqual(log_stream["console_host"], "console.demo-v2.galileocloud.io")
+        self.assertEqual(log_stream["workspace_slug"], "agent-labs")
+        self.assertEqual(log_stream["project_id"], "555caaf8-8a6b-4f15-96bd-2b4e334ca90d")
+        self.assertEqual(log_stream["log_stream_id"], "214f2b90-72a4-4e0e-81ae-b096e2fd612c")
+        self.assertTrue(log_stream["fetch_ready"])
+
+        project = module.parse_galileo_url(
+            "https://console.demo-v2.galileocloud.io/agent-labs/project/"
+            "555caaf8-8a6b-4f15-96bd-2b4e334ca90d"
+        )
+        self.assertEqual(project["artifact_type"], "project")
+        self.assertFalse(project["fetch_ready"])
+        self.assertIn("log stream", project["next_questions"][0])
+
+        experiments = module.parse_galileo_url(
+            "https://console.demo-v2.galileocloud.io/agent-labs/project/"
+            "555caaf8-8a6b-4f15-96bd-2b4e334ca90d/experiments"
+        )
+        self.assertEqual(experiments["artifact_type"], "experiments_index")
+        self.assertFalse(experiments["fetch_ready"])
+        self.assertIn("specific experiment", " ".join(experiments["next_questions"]))
+
     def test_skill_description_is_portable(self) -> None:
         skill_text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
         match = re.search(r"^description:\s*(.+)$", skill_text, flags=re.MULTILINE)
@@ -336,6 +414,39 @@ class EvalEngineerSkillTest(unittest.TestCase):
         self.assertEqual(result["decision"], "keep-candidate: cost evidence improved and quality did not regress")
         self.assertEqual(result["cost"]["average_cost"]["delta"], -4.0)
         self.assertEqual(result["quality"]["average_tool_selection_quality"]["delta"], 0.0)
+
+    def test_tokenomics_compare_infers_custom_quality_metrics_when_omitted(self) -> None:
+        module = _load_tokenomics_compare()
+        baseline = {
+            "run_name": "claim-triage-baseline",
+            "aggregate_metrics": {
+                "average_cost": 0.000050,
+                "average_num_input_tokens": 220.0,
+                "average_case_success": 0.0,
+                "average_source_authority": 0.5,
+                "average_permission_safety": 0.67,
+                "average_wall_time_ns": 1000.0,
+            },
+        }
+        verification = {
+            "run_name": "claim-triage-post",
+            "aggregate_metrics": {
+                "average_cost": 0.000045,
+                "average_num_input_tokens": 180.0,
+                "average_case_success": 1.0,
+                "average_source_authority": 1.0,
+                "average_permission_safety": 1.0,
+                "average_wall_time_ns": 800.0,
+            },
+        }
+
+        result = module.compare(baseline, verification, [])
+
+        self.assertEqual(result["decision"], "keep-candidate: cost evidence improved and quality did not regress")
+        self.assertIn("average_case_success", result["quality"])
+        self.assertIn("average_source_authority", result["quality"])
+        self.assertNotIn("average_num_input_tokens", result["quality"])
+        self.assertNotIn("average_wall_time_ns", result["quality"])
 
     def test_tokenomics_compare_rejects_when_higher_is_better_quality_drops(self) -> None:
         module = _load_tokenomics_compare()

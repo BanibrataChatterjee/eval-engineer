@@ -168,12 +168,21 @@ Compute these when the packet has enough evidence:
 - quality delta per cost delta
 
 Use `scripts/compare_tokenomics_packets.py` to calculate before/after deltas
-from two compact packets. Pass lower-is-better quality metrics explicitly when
+from two compact packets. Run it without `--quality-metrics` first so it can
+infer custom non-cost quality metrics that exist in both packets, then inspect
+the `Quality metrics compared` line. Pass explicit quality metrics when the
+packet contains numeric fields that should be excluded or when the inferred set
+misses the intended gate. Pass lower-is-better quality metrics explicitly when
 the name does not already encode direction:
 
 ```bash
+python3 skills/eval-engineer/scripts/compare_tokenomics_packets.py baseline.json verification.json
 python3 skills/eval-engineer/scripts/compare_tokenomics_packets.py baseline.json verification.json --quality-metrics average_groundedness,tool_error_rate --lower-is-better-quality-metrics tool_error_rate
 ```
+
+Do not let wall-clock fields such as `wall_time_ns`, duration fields, token
+counts, latency, or cost become quality metrics. They can prove efficiency
+movement, but they should not reject a candidate as a quality regression.
 
 ## Artifact Workflow
 

@@ -54,6 +54,10 @@ Every meaningful case or production segment should define:
   compliance-sensitive cases.
 - Keep deterministic gates for permission safety, abstention correctness, and
   forbidden answer terms.
+- Avoid self-referential safety scoring. A local metric that only reads an
+  agent-reported `quality_flags` field can confirm instrumentation shape, but
+  it cannot prove safety. Prefer observable outputs, citations, tool calls,
+  retrieved sources, and Galileo scorers for acceptance.
 
 ### Agent Performance
 
@@ -83,6 +87,7 @@ Before keeping a fix or cost-reduction candidate, state:
 5. Which segment-level acceptance gate prevents hidden regressions.
 6. Which metric gap remains if Galileo or the local packet cannot measure the
    risk directly.
+7. Which local metrics are independent observations versus agent self-reports.
 
 Use `assets/metric-profile-template.md` when writing this into an RCA artifact,
 fixture README, or eval dataset proposal.

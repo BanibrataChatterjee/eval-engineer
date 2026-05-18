@@ -1,4 +1,4 @@
-"""Install the Eval Engineer skill into Codex and Claude Code projects."""
+"""Install the Eval Engineer skill bundle into Codex and Claude Code projects."""
 
 from __future__ import annotations
 
@@ -12,15 +12,49 @@ from pathlib import Path
 from typing import Iterator, Sequence
 
 
-SKILL_NAME = "eval-engineer"
-REQUIRED_FILES = (
+SKILL_NAMES = (
+    "eval-engineer",
+    "eval-setup",
+    "eval-fetch",
+    "eval-measure",
+    "eval-diagnose",
+    "eval-cost",
+    "eval-audit",
+)
+CORE_SKILL_NAME = "eval-engineer"
+CORE_REQUIRED_FILES = (
     "SKILL.md",
     "agents/openai.yaml",
     "references/metrics.md",
     "references/tokenomics-rca.md",
+    "references/galileo-url-intake.md",
     "scripts/summarize_debug_packet.py",
     "scripts/compare_tokenomics_packets.py",
+    "scripts/parse_galileo_url.py",
 )
+PROJECT_SCAFFOLD_DIRS = (
+    ".galileo/current",
+    ".galileo/eval-dataset",
+    ".galileo/sessions",
+)
+PROJECT_SCAFFOLD_FILES = {
+    ".galileo/config.yml": """# Eval Engineer project configuration.
+# Fill this in as the app and Galileo evidence shape become clear.
+agent_type: unknown
+metrics: []
+editable_files: []
+blocked_files: []
+verification_commands: []
+evidence:
+  baseline_packet: .galileo/current/debug-packet.json
+  verification_packet: .galileo/current/verification-debug-packet.json
+""",
+    ".galileo/learnings.md": """# Eval Engineer Learnings
+
+Capture durable RCA, measurement, and tokenomics patterns here. Keep
+case-specific notes in `.galileo/current/` or dated reports.
+""",
+}
 
 
 class InstallError(RuntimeError):
@@ -31,38 +65,41 @@ class InstallError(RuntimeError):
 class Destination:
     agent: str
     scope: str
-    path: Path
+    skills_root: Path
 
 
-def _repo_skill_source() -> Path | None:
+def _repo_skills_source() -> Path | None:
     current = Path(__file__).resolve()
     for parent in current.parents:
-        candidate = parent / "skills" / SKILL_NAME
-        if (candidate / "SKILL.md").is_file():
+        candidate = parent / "skills"
+        if all((candidate / skill_name / "SKILL.md").is_file() for skill_name in SKILL_NAMES):
             return candidate
     return None
 
 
 @contextmanager
-def _skill_source() -> Iterator[Path]:
-    local_source = _repo_skill_source()
+def _skills_source() -> Iterator[Path]:
+    local_source = _repo_skills_source()
     if local_source is not None:
         yield local_source
         return
 
-    bundled = resources.files("eval_engineer_installer").joinpath(
-        "bundled",
-        SKILL_NAME,
-    )
+    bundled = resources.files("eval_engineer_installer").joinpath("bundled", "skills")
     with resources.as_file(bundled) as bundled_path:
         yield bundled_path
 
 
-def _validate_skill_dir(path: Path) -> None:
-    missing = [relative for relative in REQUIRED_FILES if not (path / relative).is_file()]
+def _validate_skill_dir(path: Path, required_files: tuple[str, ...] = ("SKILL.md",)) -> None:
+    missing = [relative for relative in required_files if not (path / relative).is_file()]
     if missing:
         formatted = ", ".join(missing)
         raise InstallError(f"{path} is missing required skill files: {formatted}")
+
+
+def _validate_skills_root(path: Path) -> None:
+    for skill_name in SKILL_NAMES:
+        required = CORE_REQUIRED_FILES if skill_name == CORE_SKILL_NAME else ("SKILL.md",)
+        _validate_skill_dir(path / skill_name, required)
 
 
 def _selected_agents(target: str) -> list[str]:
@@ -81,7 +118,7 @@ def _destinations(target: str, scope: str, project_dir: Path) -> list[Destinatio
             base = Path.home() / ".agents" / "skills"
         else:
             base = Path.home() / ".claude" / "skills"
-        destinations.append(Destination(agent=agent, scope=scope, path=base / SKILL_NAME))
+        destinations.append(Destination(agent=agent, scope=scope, skills_root=base))
     return destinations
 
 
@@ -97,33 +134,62 @@ def _remove_existing(path: Path) -> None:
         shutil.rmtree(path)
 
 
+def _scaffold_project(project_dir: Path, dry_run: bool = False) -> None:
+    project_dir = project_dir.expanduser().resolve()
+    for relative in PROJECT_SCAFFOLD_DIRS:
+        path = project_dir / relative
+        if dry_run:
+            print(f"would ensure directory: {path}")
+        else:
+            path.mkdir(parents=True, exist_ok=True)
+
+    for relative, content in PROJECT_SCAFFOLD_FILES.items():
+        path = project_dir / relative
+        if dry_run:
+            action = "keep existing" if path.exists() else "create"
+            print(f"would {action} file: {path}")
+            continue
+        if not path.exists():
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content, encoding="utf-8")
+
+
 def install(args: argparse.Namespace) -> int:
     destinations = _destinations(args.target, args.scope, args.project_dir)
-    with _skill_source() as source:
-        _validate_skill_dir(source)
+    with _skills_source() as source_root:
+        _validate_skills_root(source_root)
 
         for destination in destinations:
-            if args.dry_run:
-                print(f"would install {destination.agent} {destination.scope}: {destination.path}")
-                continue
+            for skill_name in SKILL_NAMES:
+                source = source_root / skill_name
+                path = destination.skills_root / skill_name
+                if args.dry_run:
+                    print(f"would install {destination.agent} {destination.scope}: {path}")
+                    continue
 
-            if destination.path.exists() or destination.path.is_symlink():
-                if not args.force:
-                    raise InstallError(
-                        f"{destination.path} already exists; rerun with --force to replace it"
-                    )
-                _remove_existing(destination.path)
+                if path.exists() or path.is_symlink():
+                    if not args.force:
+                        raise InstallError(
+                            f"{path} already exists; rerun with --force to replace it"
+                        )
+                    _remove_existing(path)
 
-            destination.path.parent.mkdir(parents=True, exist_ok=True)
-            if args.link:
-                if _repo_skill_source() is None:
-                    raise InstallError("--link requires running from a source checkout")
-                destination.path.symlink_to(source)
-            else:
-                shutil.copytree(source, destination.path, ignore=_copy_ignore)
+                path.parent.mkdir(parents=True, exist_ok=True)
+                if args.link:
+                    if _repo_skills_source() is None:
+                        raise InstallError("--link requires running from a source checkout")
+                    path.symlink_to(source)
+                else:
+                    shutil.copytree(source, path, ignore=_copy_ignore)
 
-            _validate_skill_dir(destination.path)
-            print(f"installed {destination.agent} {destination.scope}: {destination.path}")
+                required = CORE_REQUIRED_FILES if skill_name == CORE_SKILL_NAME else ("SKILL.md",)
+                _validate_skill_dir(path, required)
+                print(f"installed {destination.agent} {destination.scope}: {path}")
+
+        if args.scope == "project" and not args.no_scaffold:
+            _scaffold_project(args.project_dir, dry_run=args.dry_run)
+            if not args.dry_run:
+                print(f"prepared project workspace: {args.project_dir.expanduser().resolve() / '.galileo'}")
 
     if not args.dry_run:
         print("restart Codex or Claude Code if the skills directory was not already watched")
@@ -133,8 +199,17 @@ def install(args: argparse.Namespace) -> int:
 def check(args: argparse.Namespace) -> int:
     destinations = _destinations(args.target, args.scope, args.project_dir)
     for destination in destinations:
-        _validate_skill_dir(destination.path)
-        print(f"ok {destination.agent} {destination.scope}: {destination.path}")
+        for skill_name in SKILL_NAMES:
+            path = destination.skills_root / skill_name
+            required = CORE_REQUIRED_FILES if skill_name == CORE_SKILL_NAME else ("SKILL.md",)
+            _validate_skill_dir(path, required)
+            print(f"ok {destination.agent} {destination.scope}: {path}")
+    if args.scope == "project":
+        galileo_dir = args.project_dir.expanduser().resolve() / ".galileo"
+        if galileo_dir.is_dir():
+            print(f"ok project workspace: {galileo_dir}")
+        else:
+            print(f"warning: project workspace missing: {galileo_dir}", file=sys.stderr)
     return 0
 
 
@@ -161,6 +236,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--link",
         action="store_true",
         help="symlink from a local source checkout instead of copying files",
+    )
+    install_parser.add_argument(
+        "--no-scaffold",
+        action="store_true",
+        help="do not create the minimal .galileo project workspace for project-scope installs",
     )
     install_parser.set_defaults(func=install)
 

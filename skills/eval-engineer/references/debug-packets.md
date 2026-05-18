@@ -44,6 +44,11 @@ For every diagnosis, extract:
 - uncertainty: app bug, metric issue, dataset issue, integration issue, or
   insufficient evidence
 
+`summary.top_failing_metrics` should contain quality, safety, grounding,
+tooling, correctness, or workflow gaps. Do not include low absolute cost,
+latency, token, duration, wall-clock, span-count, or traffic-volume fields in
+that list. Those fields belong in tokenomics and performance sections.
+
 ## Use In A Skill Run
 
 1. Summarize the current packet:

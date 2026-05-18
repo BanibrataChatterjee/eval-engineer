@@ -373,3 +373,107 @@ MCP/app/hook behavior.
 - Verified a git-style install with
   `uvx --from git+file://<tmp-repo> eval-engineer install --target both
   --scope project --project-dir <tmp-project>`.
+
+### UX Follow-Up
+
+- Completed `GAL-110` by adding focused command skills:
+  `/eval-engineer`, `/eval-setup`, `/eval-fetch`, `/eval-measure`,
+  `/eval-diagnose`, `/eval-cost`, and `/eval-audit`.
+- Completed `GAL-111` by adding Galileo URL intake guidance and
+  `skills/eval-engineer/scripts/parse_galileo_url.py` for project, log stream,
+  experiments index, experiment, session, and trace URL parsing.
+- Completed `GAL-112` by teaching the router and fetch/diagnose skills to ask
+  only for missing evidence and distinguish ready-to-diagnose, needs-more-
+  evidence, and audit-only situations.
+- Updated the installer to install the full command-skill bundle and create a
+  minimal `.galileo/` workspace during project-scope installs without
+  overwriting existing config or learnings.
+- Tested the installed command bundle from scratch in
+  `/Users/pratik/Documents/github/test` through Claude Code CLI. The run
+  validated command discovery and routing, then fed back three UX fixes:
+  `/eval-diagnose` now honors read-only/no-edit requests, `/eval-fetch`
+  distinguishes artifact readiness from missing fetch slice, and `/eval-setup`
+  routes directly to `/eval-diagnose` or `/eval-cost` when evidence is already
+  present.
+
+### UX Verification
+
+- `PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 -m unittest tests.installer.test_install_cli`
+- `PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 -m unittest tests.skills.test_eval_engineer_skill`
+- `for skill in skills/eval-*; do python3 /Users/pratik/.codex/skills/.system/skill-creator/scripts/quick_validate.py "$skill"; done`
+- `PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 -m unittest discover -s tests/skills -p 'test_*.py'`
+- `PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 -m unittest discover -s tests/installer -p 'test_*.py'`
+- `uvx --refresh --from /Users/pratik/Documents/github/eval-engineer eval-engineer install --target both --scope project --project-dir /tmp/eval-engineer-ux-install-refresh.RK71Ue/project`
+- `uvx --refresh --from git+file://<tmp-repo> eval-engineer install --target both --scope project --project-dir /tmp/eval-engineer-ux-git.HAGe5z/project`
+- `uvx --refresh --from /Users/pratik/Documents/github/eval-engineer eval-engineer install --target both --scope project --project-dir /Users/pratik/Documents/github/test --force`
+- `claude -p --permission-mode acceptEdits --max-budget-usd 1 --allowedTools Read,Glob,Grep,LS,Bash -- '/eval-engineer inspect this project and tell me the best next eval command. Do not edit files.'`
+- `claude -p --permission-mode acceptEdits --max-budget-usd 1 --allowedTools Read,Glob,Grep,LS,Bash -- '/eval-setup inspect readiness for eval-engineer. Do not edit files.'`
+- `claude -p --permission-mode acceptEdits --max-budget-usd 1 --allowedTools Read,Glob,Grep,LS,Bash -- '/eval-fetch parse this Galileo URL and say what evidence is still missing: https://console.demo-v2.galileocloud.io/agent-labs/project/555caaf8-8a6b-4f15-96bd-2b4e334ca90d/log-streams/214f2b90-72a4-4e0e-81ae-b096e2fd612c. Do not edit files.'`
+- `claude -p --permission-mode acceptEdits --max-budget-usd 1 --allowedTools Read,Glob,Grep,LS,Bash -- '/eval-measure review whether this scratch RAG app is measured correctly. Do not edit files.'`
+- `claude -p --permission-mode acceptEdits --max-budget-usd 1 --allowedTools Read,Glob,Grep,LS,Bash -- '/eval-diagnose diagnose the current debug packet. Read-only: do not edit files or write artifacts. Return the RCA inline and list would-write files.'`
+- `claude -p --permission-mode acceptEdits --max-budget-usd 1 --allowedTools Read,Glob,Grep,LS,Bash -- '/eval-cost compare current baseline and verification packets and explain whether to keep the cost change. Do not edit files.'`
+- `claude -p --permission-mode acceptEdits --max-budget-usd 1 --allowedTools Read,Glob,Grep,LS,Bash -- '/eval-audit audit this project for launch, safety, OWASP, metric coverage, and production-readiness risks. Do not edit files. Findings first, concise.'`
+- `test ! -e .galileo/current/diagnosis.md && test ! -e .galileo/current/fix-plan.md`
+
+### External Robustness Iteration
+
+- Created `GAL-113` for external end-to-end robustness iterations.
+- Built `/Users/pratik/Documents/github/test1`, an independent claim-triage
+  agentic RAG implementation with stale policy, privacy, minor-records,
+  prompt-injection, indirect-injection, tool-safety, and low-risk cost cases.
+- Installed the full Eval Engineer command bundle into the test project for
+  Codex and Claude Code.
+- Ran eight-case pre/post local evals and real Galileo log streams. Baseline
+  log stream `e5b781ae-9840-445c-9c84-764ae49c1e39` flushed 8 traces; guarded
+  log stream `30f9b7f6-4935-4328-825f-6a4299d64552` flushed 8 traces.
+- Guarded mode moved local packet quality from `average_case_success=0.0` to
+  `1.0`, while reducing average cost by 4.98%, latency by 14.07%, input tokens
+  by 16.44%, total tokens by 12.67%, retrieved context tokens by 21.09%, and
+  self-check count by 25%.
+- Created full eight-case Galileo experiments
+  `249dbf8a-9bc9-4291-a359-543ffe1a337e` and
+  `080ceb0b-dc14-4b34-a684-c409c62ec703`. They produced system token/latency
+  metrics, but explicit scorer jobs failed with the known
+  `None/inputs.feather` artifact error, so they are not accepted quality
+  evidence.
+- Hardened the tokenomics comparison helper so custom quality metrics are
+  inferred when no explicit `--quality-metrics` list is provided.
+- Fed test1 learnings back into the skill references: experiment scorer-job
+  failure handling, inferred custom quality metrics, and avoiding
+  self-referential safety scoring.
+
+### External Robustness Next Move
+
+Run a second independent test project with a different implementation shape
+from claim triage, then verify whether the current command UX and skill
+guidance still hold without fixture-specific assumptions.
+
+### External Robustness Iteration 2
+
+- Built `/Users/pratik/Documents/github/test2`, an independent SQL/tool
+  revenue-ops agent with privacy, SQL-injection-like input, stale snapshot,
+  unsafe refund, multi-step follow-up, and over-querying cases.
+- Installed the Eval Engineer command bundle into the test project and invoked
+  `/eval-engineer`, `/eval-cost`, and `/eval-diagnose` through Claude Code CLI.
+- Ran six-case pre/post local evals and real Galileo log streams. Baseline log
+  stream `30234334-12f9-4094-941a-a42a0bfac2b1` flushed 6 traces; guarded log
+  stream `3b2ea02e-2a79-4203-83de-32811083cceb` flushed 6 traces.
+- Created Galileo experiment artifacts `fddc01db-c517-4607-8208-11e763ef3550`
+  and `54f656a5-642d-4d78-90f6-1ae4137920a6` for system token/latency
+  evidence.
+- Guarded mode moved local packet quality from `average_case_success=0.1667`
+  to `1.0`, while reducing average estimated cost by 3.15%, latency by 25.35%,
+  total tokens by 3.44%, tool calls by 66.67%, and agent steps by 48.72%.
+- Found and fixed a tokenomics helper bug where `average_wall_time_ns` was
+  inferred as a higher-is-better quality metric. Wall time, duration, latency,
+  token, and cost fields are efficiency evidence, not quality gates.
+- Found a fixture packet-shaping issue where low cost values appeared as
+  `top_failing_metrics`; future packet summaries should separate quality
+  failures from cost/performance signals.
+
+### External Robustness Next Move 2
+
+The two completed external fixtures now cover RAG-like claim triage and
+SQL/tool revenue operations. A next test should stress either multi-turn memory
+or multi-agent handoff, because current coverage is still single-session and
+deterministic.

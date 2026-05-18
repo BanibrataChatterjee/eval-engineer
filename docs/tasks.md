@@ -165,3 +165,33 @@
   distribution is needed (`GAL-108`).
 - [x] Rename the installed skill id to `eval-engineer` before release
   (`GAL-109`).
+
+## Milestone 8: Real-World UX
+
+- [x] Design the Eval Engineer command UX and router behavior around user jobs:
+  setup, fetch, measure, diagnose, cost, and audit (`GAL-110`).
+- [x] Add Galileo URL intake so users can start from project, log stream,
+  experiment, session, or trace URLs/IDs and produce a local debug packet
+  (`GAL-111`).
+- [x] Add a guided production RCA questioning workflow for partial evidence,
+  ambiguous URLs, missing scorer results, permission gaps, and unclear user
+  intent (`GAL-112`).
+- [x] Validate the full command bundle from scratch in
+  `/Users/pratik/Documents/github/test` with Claude Code CLI, capture UX
+  learnings, and harden read-only, fetch-readiness, and next-command behavior
+  (`GAL-112`).
+- [ ] Run external end-to-end robustness iterations across independent test
+  projects, with real Galileo log streams/experiments, Eval Engineer RCA,
+  skill improvements, and documented learnings (`GAL-113`).
+
+## Milestone 9: Alpha Release Hardening
+
+- [ ] Harden Galileo Python SDK compatibility and update strategy (`GAL-114`).
+- [ ] Make Galileo URL fetch end-to-end for common production RCA URLs
+  (`GAL-115`).
+- [ ] Resolve or clearly gate Galileo function-experiment scorer failures
+  (`GAL-116`).
+- [ ] Add a multi-turn or handoff robustness fixture before public release
+  (`GAL-117`).
+- [ ] Prepare alpha release docs with exact capabilities and limitations
+  (`GAL-118`).

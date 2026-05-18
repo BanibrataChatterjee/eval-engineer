@@ -59,6 +59,16 @@ LOWER_IS_BETTER_QUALITY_TERMS = (
     "violation_rate",
     "unsafe_rate",
 )
+QUALITY_EXCLUDE_TERMS = TRAFFIC_OR_VOLUME_TERMS + EFFICIENCY_TERMS + (
+    "num_input",
+    "num_output",
+    "num_total",
+    "input_token",
+    "output_token",
+    "total_token",
+    "wall_time",
+    "duration",
+)
 
 
 def _metrics(packet: dict[str, Any]) -> dict[str, Any]:
@@ -126,6 +136,18 @@ def _quality_direction(name: str, lower_is_better: set[str]) -> str:
     if any(term in normalized for term in LOWER_IS_BETTER_QUALITY_TERMS):
         return "lower_is_better"
     return "higher_is_better"
+
+
+def _infer_quality_metrics(before_metrics: dict[str, Any], after_metrics: dict[str, Any]) -> list[str]:
+    inferred = []
+    for name in sorted(set(before_metrics) & set(after_metrics)):
+        if _numeric(before_metrics.get(name)) is None or _numeric(after_metrics.get(name)) is None:
+            continue
+        normalized = name.lower()
+        if any(term in normalized for term in QUALITY_EXCLUDE_TERMS):
+            continue
+        inferred.append(name)
+    return inferred
 
 
 def _quality_regressed(values: dict[str, Any]) -> bool:
@@ -217,6 +239,8 @@ def compare(
 ) -> dict[str, Any]:
     before_metrics = _metrics(baseline)
     after_metrics = _metrics(verification)
+    if not quality_metrics:
+        quality_metrics = _infer_quality_metrics(before_metrics, after_metrics)
     lower_is_better = set(lower_is_better_quality_metrics or [])
     cost, quality = _compare_metric_sets(
         before_metrics,
@@ -259,6 +283,7 @@ def compare(
         "cost": cost,
         "quality": quality,
         "segments": segments,
+        "quality_metrics": quality_metrics,
         "decision": decision,
     }
 
@@ -270,6 +295,7 @@ def render_markdown(result: dict[str, Any]) -> str:
         f"- Baseline: `{result.get('baseline') or '<unknown>'}`",
         f"- Verification: `{result.get('verification') or '<unknown>'}`",
         f"- Decision: {result['decision']}",
+        f"- Quality metrics compared: {', '.join(result.get('quality_metrics') or []) or '<none>'}",
         "",
         "## Cost, Latency, And Token Metrics",
         "",
@@ -358,8 +384,8 @@ def main() -> None:
     )
     parser.add_argument(
         "--quality-metrics",
-        default="average_tool_selection_quality,tool_selection_quality,tool_error_rate,count_tool_error_rate,correctness,groundedness,context_adherence,instruction_adherence",
-        help="Comma-separated quality metrics that must not regress.",
+        default="",
+        help="Comma-separated quality metrics that must not regress. If omitted, infer non-cost numeric metrics from both packets.",
     )
     parser.add_argument(
         "--lower-is-better-quality-metrics",
