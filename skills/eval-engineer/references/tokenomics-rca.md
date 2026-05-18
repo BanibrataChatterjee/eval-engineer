@@ -172,7 +172,7 @@ from two compact packets. Pass lower-is-better quality metrics explicitly when
 the name does not already encode direction:
 
 ```bash
-python3 skills/galileo-eval-engineer/scripts/compare_tokenomics_packets.py baseline.json verification.json --quality-metrics average_groundedness,tool_error_rate --lower-is-better-quality-metrics tool_error_rate
+python3 skills/eval-engineer/scripts/compare_tokenomics_packets.py baseline.json verification.json --quality-metrics average_groundedness,tool_error_rate --lower-is-better-quality-metrics tool_error_rate
 ```
 
 ## Artifact Workflow

@@ -153,3 +153,15 @@
 - [ ] Draft the Eval Engineer launch blog (`GAL-93`).
 - [ ] Create launch graphics: architecture diagram and eval-loop diagram
   (`GAL-94`).
+
+## Milestone 7: Distribution
+
+- [x] Add a `uvx` installer for the canonical Eval Engineer skill that supports
+  Codex and Claude Code project/user installs (`GAL-107`).
+- [x] Validate the installer in a separate throwaway project (`GAL-107`).
+- [x] Document the skill-first install path and plugin packaging decision
+  (`GAL-107`).
+- [ ] Evaluate separate Codex and Claude plugin packages once plugin
+  distribution is needed (`GAL-108`).
+- [x] Rename the installed skill id to `eval-engineer` before release
+  (`GAL-109`).

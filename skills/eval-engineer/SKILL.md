@@ -1,5 +1,5 @@
 ---
-name: galileo-eval-engineer
+name: eval-engineer
 description: Use when debugging or improving AI agents/RAG apps with Galileo evidence. Reads packets, diagnoses failures, writes bounded fix and verification plans, compares runs, and records learnings.
 ---
 
@@ -25,7 +25,7 @@ replace the model's general debugging ability with a fixed failure taxonomy.
 
 2. **Summarize evidence before reasoning.**
    - Run:
-     `python3 skills/galileo-eval-engineer/scripts/summarize_debug_packet.py <packet>`
+     `python3 skills/eval-engineer/scripts/summarize_debug_packet.py <packet>`
    - Use raw traces only when the compact packet is missing required evidence.
 
 3. **Diagnose from Galileo concepts.**

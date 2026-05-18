@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "eval-engineer"
+version = "0.1.0"
+description = "Installer for the Eval Engineer Galileo skill for Codex and Claude Code."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+authors = [
+  { name = "Galileo Agent Labs" }
+]
+
+[project.scripts]
+eval-engineer = "eval_engineer_installer.cli:main"
+
+[tool.hatch.build]
+exclude = [
+  "**/.DS_Store",
+  "**/__pycache__",
+  "**/*.pyc"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/eval_engineer_installer"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"skills/eval-engineer" = "eval_engineer_installer/bundled/eval-engineer"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "pyproject.toml",
+  "README.md",
+  "src/eval_engineer_installer/**",
+  "skills/eval-engineer/**"
+]

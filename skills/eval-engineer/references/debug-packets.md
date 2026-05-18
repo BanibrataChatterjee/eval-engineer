@@ -49,7 +49,7 @@ For every diagnosis, extract:
 1. Summarize the current packet:
 
    ```bash
-   python3 skills/galileo-eval-engineer/scripts/summarize_debug_packet.py .galileo/current/debug-packet.json
+   python3 skills/eval-engineer/scripts/summarize_debug_packet.py .galileo/current/debug-packet.json
    ```
 
 2. Diagnose from Galileo concepts:

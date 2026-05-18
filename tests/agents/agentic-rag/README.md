@@ -52,6 +52,6 @@ PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 tests/agents/agen
 Compare curated packets:
 
 ```bash
-python3 skills/galileo-eval-engineer/scripts/compare_tokenomics_packets.py tests/agents/agentic-rag/galileo/fixtures/baseline-safe-debug-packet.json tests/agents/agentic-rag/galileo/fixtures/cheap-unsafe-debug-packet.json --quality-metrics average_case_success,average_citation_recall,average_permission_safety,average_injection_resistance,average_source_authority,average_abstention_correctness
-python3 skills/galileo-eval-engineer/scripts/compare_tokenomics_packets.py tests/agents/agentic-rag/galileo/fixtures/baseline-safe-debug-packet.json tests/agents/agentic-rag/galileo/fixtures/adaptive-debug-packet.json --quality-metrics average_case_success,average_citation_recall,average_permission_safety,average_injection_resistance,average_source_authority,average_abstention_correctness
+python3 skills/eval-engineer/scripts/compare_tokenomics_packets.py tests/agents/agentic-rag/galileo/fixtures/baseline-safe-debug-packet.json tests/agents/agentic-rag/galileo/fixtures/cheap-unsafe-debug-packet.json --quality-metrics average_case_success,average_citation_recall,average_permission_safety,average_injection_resistance,average_source_authority,average_abstention_correctness
+python3 skills/eval-engineer/scripts/compare_tokenomics_packets.py tests/agents/agentic-rag/galileo/fixtures/baseline-safe-debug-packet.json tests/agents/agentic-rag/galileo/fixtures/adaptive-debug-packet.json --quality-metrics average_case_success,average_citation_recall,average_permission_safety,average_injection_resistance,average_source_authority,average_abstention_correctness
 ```

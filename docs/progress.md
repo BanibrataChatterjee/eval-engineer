@@ -27,17 +27,17 @@
 - Saved first debug packet:
   `tests/agents/tool-calling-support/galileo/debug-packets/TC-1-anthropic-20260512T122334Z.json`.
 - Added first repo-local skill:
-  `skills/galileo-eval-engineer/SKILL.md`.
+  `skills/eval-engineer/SKILL.md`.
 - Added reusable debug-packet skill support:
-  `skills/galileo-eval-engineer/scripts/summarize_debug_packet.py` and
-  `skills/galileo-eval-engineer/references/debug-packets.md`.
+  `skills/eval-engineer/scripts/summarize_debug_packet.py` and
+  `skills/eval-engineer/references/debug-packets.md`.
 - Reworked the skill away from the first support-agent case and toward the
   general repo-local `.galileo/current/` working-set model described in the blog
   drafts.
 - Added `.galileo/config.yml`, `.galileo/learnings.md`, `.galileo/index.json`,
   and reviewed eval-dataset files for future candidate promotion.
 - Added deterministic skill checks under
-  `tests/skills/test_galileo_eval_engineer_skill.py` so the skill stays general
+  `tests/skills/test_eval_engineer_skill.py` so the skill stays general
   and the summarizer handles a non-agent-specific RAG packet.
 - Added RCA/discoverability framing to the plan and blog drafts: reduce
   time-to-RCA, improve Galileo discoverability for non-developers, focus on
@@ -78,12 +78,12 @@
   and one `escalate_to_billing` call. Final local all-case score is `0.20`
   versus the `0.15` baseline.
 - Started the generalized Galileo RCA recipe in
-  `skills/galileo-eval-engineer/references/rca-recipe.md`. The recipe captures
+  `skills/eval-engineer/references/rca-recipe.md`. The recipe captures
   the reusable loop from the first diagnose-fix-verify run: fetched packets as
   source of truth, metric-contract scoping, expected-vs-actual comparison, fix
   surface classification, before/after Galileo proof, and durable learning
   capture.
-- Added `skills/galileo-eval-engineer/agents/openai.yaml` and validated the
+- Added `skills/eval-engineer/agents/openai.yaml` and validated the
   skill with `quick_validate.py`.
 - Created Galileo project `eval-engineer`
   (`160fb99e-a0a7-4726-a7e2-6a2beb1c765f`).
@@ -151,7 +151,7 @@
   - `GAL-93`: Eval Engineer launch blog.
   - `GAL-94`: Eval Engineer launch graphics.
 - Completed `GAL-95` by adding tokenomics RCA as a sub-workflow inside
-  `skills/galileo-eval-engineer/`. The addition includes
+  `skills/eval-engineer/`. The addition includes
   `references/tokenomics-rca.md`, cost diagnosis/fix/quality-preserving
   verification templates, `scripts/compare_tokenomics_packets.py`, and tests.
   The helper compared the current TC-1 baseline and verification packets as a
@@ -315,3 +315,61 @@ Use the expanded agentic RAG fixture as the main demo substrate for the
 tokenomics skill. Next, fetch scored Galileo metric results for the expanded
 log streams when scorer jobs settle. Consider a small live-generation lane
 later for final-answer prose variance.
+
+## 2026-05-18
+
+### Done
+
+- Created and completed `GAL-107` for the Eval Engineer skill installer.
+- Added the `eval-engineer` Python CLI with `install` and `check`
+  commands, packaged through `pyproject.toml` for `uvx --from ...` usage.
+- Kept `skills/eval-engineer/` as the single canonical skill source and
+  packaged that folder into the installer at build time.
+- Added project-scope installs for Codex at
+  `.agents/skills/eval-engineer` and Claude Code at
+  `.claude/skills/eval-engineer`.
+- Added user-scope installs for Codex at
+  `~/.agents/skills/eval-engineer` and Claude Code at
+  `~/.claude/skills/eval-engineer`.
+- Documented the skill-first path in `docs/installation.md`: use `uvx` now,
+  then package separate Codex and Claude plugins later if marketplace,
+  versioned team/community distribution, hooks, MCP servers, or app
+  integrations justify it.
+- Created `GAL-108` as the Backlog follow-up for separate Codex and Claude
+  plugin packaging.
+
+### Verification
+
+- `PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 -m unittest tests.installer.test_install_cli`
+- `PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 -m unittest tests.skills.test_eval_engineer_skill`
+- `python3 /Users/pratik/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/eval-engineer`
+- `PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 -m unittest discover -s tests/skills -p 'test_*.py'`
+- `PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 -m unittest discover -s tests/installer -p 'test_*.py'`
+- `uvx --from /Users/pratik/Documents/github/eval-engineer eval-engineer install --target both --scope project --project-dir /tmp/eval-engineer-uvx-install.o704Of/sample-project`
+- `uvx --from git+file:///tmp/eval-engineer-git-url.gCFsUu/repo eval-engineer install --target both --scope project --project-dir /tmp/eval-engineer-git-url.gCFsUu/project`
+
+### Current Blocker
+
+The public GitHub command is implemented and verified through local and
+git-style `uvx` installs. It becomes usable from the live GitHub URL after this
+branch is pushed or merged with `pyproject.toml` and the installer package.
+
+### Next Move
+
+Publish this branch so users can run the documented GitHub URL directly. Keep
+plugin packaging as `GAL-108` unless we need marketplace installation or bundled
+MCP/app/hook behavior.
+
+### Rename Follow-Up
+
+- Completed `GAL-109` by renaming the public skill id to `eval-engineer`
+  before release.
+- Updated the canonical skill source, Codex and Claude symlinks, installer
+  destination names, docs, and tests.
+- Kept only `eval-engineer` as the CLI command because the installer has not
+  been released yet.
+- Verified a `uvx --from /Users/pratik/Documents/github/eval-engineer
+  eval-engineer install` run in a throwaway project.
+- Verified a git-style install with
+  `uvx --from git+file://<tmp-repo> eval-engineer install --target both
+  --scope project --project-dir <tmp-project>`.

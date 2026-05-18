@@ -38,27 +38,31 @@ The north-star loop is:
 
 ## Skill Rules
 
-- Canonical skill source: `skills/galileo-eval-engineer/`.
-- Codex install link: `.agents/skills/galileo-eval-engineer`.
-- Claude install link: `.claude/skills/galileo-eval-engineer`.
+- Canonical skill source: `skills/eval-engineer/`.
+- Codex install link: `.agents/skills/eval-engineer`.
+- Claude install link: `.claude/skills/eval-engineer`.
+- Public installer CLI: `eval-engineer` from `pyproject.toml`. Keep it runnable
+  through `uvx --from git+https://github.com/Galileo-Agent-Labs/eval-engineer.git`.
+- Keep skill distribution skill-first. Future Codex and Claude plugins should
+  package the canonical skill source instead of maintaining separate copies.
 - Keep `SKILL.md` general across agents, RAG, workflows, metrics, and providers.
 - Keep RCA outputs grounded in trace, span, session, metric, dataset, and
   experiment evidence.
 - For reference fixtures, give each case a risk profile, quality dimensions,
   and case-specific Galileo metric profile. Do not rely on one global metric
   list to prove safety, quality, performance, and cost across all cases.
-- Use `skills/galileo-eval-engineer/references/metric-profile-checklist.md`
-  and `skills/galileo-eval-engineer/assets/metric-profile-template.md` before
+- Use `skills/eval-engineer/references/metric-profile-checklist.md`
+  and `skills/eval-engineer/assets/metric-profile-template.md` before
   optimizing cost or adding broad fixture coverage.
 - When logging test-suite cases to Galileo, include the full expected-output
   contract in `dataset_output`: expected decision, required/forbidden citations,
   required tools, answer constraints, abstention/permission requirements, risk
   profile, quality dimensions, and intended metrics.
-- Use `skills/galileo-eval-engineer/references/rca-recipe.md` for generalized
+- Use `skills/eval-engineer/references/rca-recipe.md` for generalized
   diagnose-fix-verify work and update it when a reusable Galileo RCA pattern is
   discovered.
-- Keep detailed Galileo mechanics in `skills/galileo-eval-engineer/references/`.
-- Keep deterministic helpers in `skills/galileo-eval-engineer/scripts/`.
+- Keep detailed Galileo mechanics in `skills/eval-engineer/references/`.
+- Keep deterministic helpers in `skills/eval-engineer/scripts/`.
 - Do not hardcode `TC-1`, the Nexus support agent, Brazil, one model, or one
   metric into the general skill.
 
@@ -79,20 +83,20 @@ the user asks for history or comparison.
 After skill changes, run:
 
 ```bash
-PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 -m unittest tests.skills.test_galileo_eval_engineer_skill
-python3 /Users/pratik/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/galileo-eval-engineer
+PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 -m unittest tests.skills.test_eval_engineer_skill
+python3 /Users/pratik/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/eval-engineer
 ```
 
 For the generic packet summarizer:
 
 ```bash
-python3 skills/galileo-eval-engineer/scripts/summarize_debug_packet.py tests/skills/fixtures/generic-rag-debug-packet.json
+python3 skills/eval-engineer/scripts/summarize_debug_packet.py tests/skills/fixtures/generic-rag-debug-packet.json
 ```
 
 For tokenomics before/after packet comparison:
 
 ```bash
-python3 skills/galileo-eval-engineer/scripts/compare_tokenomics_packets.py .galileo/current/debug-packet.json .galileo/current/verification-debug-packet.json --quality-metrics average_tool_selection_quality,tool_error_rate,average_completeness_gpt,average_groundedness --lower-is-better-quality-metrics tool_error_rate
+python3 skills/eval-engineer/scripts/compare_tokenomics_packets.py .galileo/current/debug-packet.json .galileo/current/verification-debug-packet.json --quality-metrics average_tool_selection_quality,tool_error_rate,average_completeness_gpt,average_groundedness --lower-is-better-quality-metrics tool_error_rate
 ```
 
 For tokenomics work, compare cost, latency, and token movement against Galileo
@@ -107,6 +111,15 @@ of the loop got cheaper.
 
 Use live model or Galileo calls only when the task explicitly requires runtime
 verification. Do not print secret values.
+
+After installer changes, test the Python CLI and a real `uvx` install into a
+throwaway project:
+
+```bash
+PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 -m unittest tests.installer.test_install_cli
+mkdir -p /tmp/eval-engineer-install-test
+uvx --from /Users/pratik/Documents/github/eval-engineer eval-engineer install --target both --scope project --project-dir /tmp/eval-engineer-install-test
+```
 
 ## Linear Hygiene
 
@@ -124,6 +137,7 @@ Current active planning issues:
 - `GAL-87`: answer-quality check for policy explanation correctness.
 - `GAL-93`: Eval Engineer launch blog.
 - `GAL-94`: Eval Engineer launch graphics.
+- `GAL-108`: evaluate separate Codex and Claude plugin packaging.
 
 ## Secrets And Generated Files
 

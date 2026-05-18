@@ -38,14 +38,14 @@ PYTHONPYCACHEPREFIX=/private/tmp/eval-engineer-pycache python3 tests/agents/poli
 Compare before and after packets with the tokenomics skill helper:
 
 ```bash
-python3 skills/galileo-eval-engineer/scripts/compare_tokenomics_packets.py <baseline-packet.json> <verification-packet.json> --quality-metrics average_completeness_gpt,average_groundedness,average_context_relevance
+python3 skills/eval-engineer/scripts/compare_tokenomics_packets.py <baseline-packet.json> <verification-packet.json> --quality-metrics average_completeness_gpt,average_groundedness,average_context_relevance
 ```
 
 Compare the curated hard-suite packets:
 
 ```bash
-python3 skills/galileo-eval-engineer/scripts/compare_tokenomics_packets.py tests/agents/policy-rag/galileo/fixtures/hard-wide-baseline-debug-packet.json tests/agents/policy-rag/galileo/fixtures/hard-focused-risky-debug-packet.json --quality-metrics average_local_answer_score
-python3 skills/galileo-eval-engineer/scripts/compare_tokenomics_packets.py tests/agents/policy-rag/galileo/fixtures/hard-wide-baseline-debug-packet.json tests/agents/policy-rag/galileo/fixtures/hard-balanced-verification-debug-packet.json --quality-metrics average_local_answer_score
+python3 skills/eval-engineer/scripts/compare_tokenomics_packets.py tests/agents/policy-rag/galileo/fixtures/hard-wide-baseline-debug-packet.json tests/agents/policy-rag/galileo/fixtures/hard-focused-risky-debug-packet.json --quality-metrics average_local_answer_score
+python3 skills/eval-engineer/scripts/compare_tokenomics_packets.py tests/agents/policy-rag/galileo/fixtures/hard-wide-baseline-debug-packet.json tests/agents/policy-rag/galileo/fixtures/hard-balanced-verification-debug-packet.json --quality-metrics average_local_answer_score
 ```
 
 Curated packet fixtures live under `galileo/fixtures/`; generated fetched

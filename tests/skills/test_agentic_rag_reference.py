@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 EXAMPLE_DIR = ROOT / "tests" / "agents" / "agentic-rag"
 TOKENOMICS_COMPARE = (
-    ROOT / "skills" / "galileo-eval-engineer" / "scripts" / "compare_tokenomics_packets.py"
+    ROOT / "skills" / "eval-engineer" / "scripts" / "compare_tokenomics_packets.py"
 )
 sys.path.insert(0, str(EXAMPLE_DIR))
 

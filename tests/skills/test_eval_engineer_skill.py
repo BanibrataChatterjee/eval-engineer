@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SKILL_DIR = ROOT / "skills" / "galileo-eval-engineer"
+SKILL_DIR = ROOT / "skills" / "eval-engineer"
 SUMMARIZER = SKILL_DIR / "scripts" / "summarize_debug_packet.py"
 TOKENOMICS_COMPARE = SKILL_DIR / "scripts" / "compare_tokenomics_packets.py"
 ASSETS_DIR = SKILL_DIR / "assets"
@@ -39,7 +39,7 @@ def _tokenomics_scenario(name: str) -> dict:
     return scenarios[name]
 
 
-class GalileoEvalEngineerSkillTest(unittest.TestCase):
+class EvalEngineerSkillTest(unittest.TestCase):
     def test_skill_description_is_portable(self) -> None:
         skill_text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
         match = re.search(r"^description:\s*(.+)$", skill_text, flags=re.MULTILINE)

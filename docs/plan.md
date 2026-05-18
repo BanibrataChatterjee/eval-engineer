@@ -147,7 +147,7 @@ metric values, and include the Galileo URL or stable ID when available.
 - `claude-sonnet-4-6` is the canonical Anthropic model for this reference
   implementation.
 - Drafted the first repo-local diagnose/fix/verify skill at
-  `skills/galileo-eval-engineer/SKILL.md`.
+  `skills/eval-engineer/SKILL.md`.
 - Reworked the skill to use the general `.galileo/` working-set model from the
   blog drafts rather than hardcoded support-agent case instructions.
 - Linear tracking:

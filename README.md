@@ -58,7 +58,7 @@ rewriting, but measured change retention.
 ## What The Skill Adds
 
 The core artifact is the portable skill in
-`skills/galileo-eval-engineer/`.
+`skills/eval-engineer/`.
 
 The host agent provides repo access, command execution, and code edits. The
 skill provides the eval workflow:
@@ -73,6 +73,18 @@ skill provides the eval workflow:
 The skill is intentionally general. The first fixture is a tool-calling support
 agent, but Eval Engineer is meant to work across agents, RAG apps, workflows,
 providers, experiments, log streams, and custom metrics.
+
+## Quick Install
+
+Install the skill into a project for both Codex and Claude Code:
+
+```bash
+uvx --from git+https://github.com/Galileo-Agent-Labs/eval-engineer.git \
+  eval-engineer install --target both --scope project --project-dir .
+```
+
+See `docs/installation.md` for user-scope installs and plugin packaging
+guidance.
 
 ## A Small Example
 
@@ -110,7 +122,7 @@ metric exposes failure
 
 This repo contains the first draft of that workflow:
 
-- `skills/galileo-eval-engineer/` is the portable skill.
+- `skills/eval-engineer/` is the portable skill.
 - `.galileo/` is the local evidence working set used by the skill.
 - `tests/agents/tool-calling-support/` is the first reference fixture.
 - `tests/skills/` checks that the skill stays general and does not overfit to
