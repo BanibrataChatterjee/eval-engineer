@@ -1,7 +1,12 @@
 # Eval Engineer
 
+![Eval Engineer routes Galileo evidence into coding-agent RCA and verification](docs/images/readme-hero.png)
+
 Eval Engineer turns generic coding agents like Codex and Claude Code into
 Galileo-backed eval engineers.
+
+Read the launch post:
+[Introducing Eval Engineer: Bringing Eval Expertise to Claude and Codex](https://galileo.ai/blog/introducing-eval-engineer-bringing-eval-expertise-to-claude-and-codex).
 
 The idea is simple: coding agents are good at changing code, but AI apps should
 not improve by guesswork. They should improve through evidence. Eval Engineer
@@ -31,6 +36,12 @@ Eval Engineer adds that missing eval discipline as a portable skill.
 
 Eval Engineer is built around a small, repeatable loop:
 
+<img
+  src="docs/images/system-flow.svg"
+  alt="Eval Engineer system flow"
+  width="100%"
+/>
+
 ```text
 AI app behavior
     -> Galileo traces and metrics
@@ -56,6 +67,8 @@ This is the practical path toward self-improving agents: not autonomous
 rewriting, but measured change retention.
 
 ## What The Skill Adds
+
+![Eval Engineer command skills overview](docs/images/skills-overview.png)
 
 The core artifact is the portable skill in
 `skills/eval-engineer/`.
@@ -133,7 +146,7 @@ In Claude Code, use `/eval-engineer` instead. If you already have Galileo
 evidence, start with the artifact you have:
 
 ```text
-$eval-fetch https://console.demo-v2.galileocloud.io/.../log-streams/...
+$eval-fetch https://app.galileo.ai/.../log-streams/...
 $eval-diagnose .galileo/current/debug-packet.json
 $eval-cost compare the baseline and verification packets
 ```
@@ -141,57 +154,41 @@ $eval-cost compare the baseline and verification packets
 See `docs/installation.md` for user-scope installs, detailed command behavior,
 and plugin packaging guidance.
 
-## A Small Example
-
-In the first reference loop, a support agent selected the wrong tool for a user
-request. Galileo exposed the failure with `tool_selection_quality`.
-
-The first instinct was to improve the prompt. That helped locally, but the
-Galileo runs showed the behavior was still unstable. The evidence pointed to a
-different fix surface: the runtime tool contract was too loose.
-
-The durable fix combined:
-
-- a narrow policy-derived tool availability gate
-- preservation of enum schemas in the tool adapter
-- disabling parallel tool calls for that runner
-
-After the fix, the relevant Galileo experiment returned
-`average_tool_selection_quality: 1.0`.
-
-That did not mean the whole agent was solved. It meant the tool-selection metric
-had done its job. A new gap appeared: the final answer could still need better
-policy-quality evaluation. That becomes the next eval.
-
-This is the core Eval Engineer pattern:
-
-```text
-metric exposes failure
-    -> evidence points to fix surface
-    -> bounded change
-    -> metric improves
-    -> remaining gap becomes the next eval
-```
-
 ## What Lives In This Repo
 
-This repo contains the first draft of that workflow:
+This repo separates the reusable skill, the installer, the test fixtures, and
+the project notes. The split matters: users install the skill into their own
+agent repo, while this repo keeps the reference implementations and regression
+tests that make the skill safer to change.
 
-- `skills/eval-engineer/` is the portable skill.
-- `.galileo/` is the local evidence working set used by the skill.
-- `tests/agents/tool-calling-support/` is the first reference fixture.
-- `tests/skills/` checks that the skill stays general and does not overfit to
-  the first fixture.
-- `docs/` tracks the current plan, tasks, and progress.
-- `notes/` and `blogs/` preserve the product thinking behind the work.
+```text
+skills/
+  eval-engineer/      Shared Galileo workflow, references, templates, scripts.
+  eval-setup/         Command skill for preparing or inspecting a repo.
+  eval-fetch/         Command skill for Galileo URL and evidence intake.
+  eval-measure/       Command skill for metric profiles and eval contracts.
+  eval-diagnose/      Command skill for RCA from traces, spans, and metrics.
+  eval-cost/          Command skill for tokenomics and cost RCA.
+  eval-audit/         Command skill for launch, safety, and OWASP review.
+
+src/
+  eval_engineer_installer/
+                      The `eval-engineer` CLI used by `uvx` installs.
+
+tests/
+  agents/             Reference AI apps used to pressure-test the skill.
+  skills/             Behavioral tests and packet fixtures for skill logic.
+  installer/          Tests for project/user installs and command discovery.
+
+docs/
+  installation.md     Detailed install behavior and plugin direction.
+  plan.md             Product direction and architecture notes.
+  tasks.md            Current checklist and Linear issue mapping.
+  progress.md         Running work log and validation evidence.
+  images/             README-safe images copied from launch/blog assets.
+```
 
 The key design choice is separation of concerns. Galileo stores behavior
 evidence. The coding agent edits the repo. The skill connects them through a
-repeatable eval loop.
-
-## Direction
-
-The next step is to expand from the first tool-calling fixture into RAG and
-production log-stream RCA. The product shape should stay the same: read
-evidence, diagnose precisely, change one thing, verify with metrics, and keep
-only what measurably improves.
+repeatable eval loop, with reference fixtures and tests here to keep that loop
+from becoming tied to one demo agent.
