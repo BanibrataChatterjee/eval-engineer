@@ -1,0 +1,8 @@
+{
+  "id": "RAG-4",
+  "category": "enterprise_refund",
+  "question": "An enterprise customer wants a $6,000 ACH refund. What has to happen and how long after approval?",
+  "expected_answer_terms": ["billing ticket", "account manager approval", "7-14 business days"],
+  "expected_source_ids": ["billing-refunds", "refund-exceptions"]
+}
+

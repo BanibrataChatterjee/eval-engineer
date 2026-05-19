@@ -1,0 +1,35 @@
+{
+  "schema_version": "0.1",
+  "project_id": "example-project",
+  "run_id": "rag-run-001",
+  "run_name": "faq-rag-baseline",
+  "agent_type": "rag",
+  "summary": {
+    "num_traces": 1,
+    "top_failing_metrics": ["groundedness"],
+    "metrics": {
+      "groundedness": 0.42,
+      "answer_relevance": 0.77
+    }
+  },
+  "dataset": {
+    "case_id": "FAQ-17",
+    "user_message": "What is the refund timeline for ACH payments?",
+    "expected_output": "ACH refunds process in 7-14 business days."
+  },
+  "session_output": {
+    "final_response": "ACH refunds usually process in 3-5 business days."
+  },
+  "traces": [
+    {
+      "trace_id": "trace-rag-001",
+      "input": "What is the refund timeline for ACH payments?",
+      "output": "ACH refunds usually process in 3-5 business days.",
+      "scores": {
+        "groundedness": 0.42,
+        "answer_relevance": 0.77
+      },
+      "notes": "The retrieved policy said 7-14 business days, but the answer used a card-refund timeline."
+    }
+  ]
+}

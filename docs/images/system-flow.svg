@@ -1,0 +1,255 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 880" font-family="'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="sh" x="-4%" y="-6%" width="108%" height="116%">
+      <feDropShadow dx="1" dy="2" stdDeviation="5" flood-color="#0B1120" flood-opacity="0.06"/>
+    </filter>
+    <marker id="ar" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0 0 L10 4 L0 8 Z" fill="#6B7280" opacity="0.5"/>
+    </marker>
+    <marker id="ar-blue" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0 0 L10 4 L0 8 Z" fill="#1098F7" opacity="0.55"/>
+    </marker>
+    <marker id="ar-coral" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0 0 L10 4 L0 8 Z" fill="#E35454" opacity="0.55"/>
+    </marker>
+    <marker id="ar-amber" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0 0 L10 4 L0 8 Z" fill="#E89005" opacity="0.55"/>
+    </marker>
+  </defs>
+
+  <rect width="1060" height="880" fill="#F5F6F8"/>
+
+  <!-- Title -->
+  <text x="530" y="34" text-anchor="middle" font-size="24" font-weight="600" fill="#0B1120">How Eval Engineer Works</text>
+  <text x="530" y="54" text-anchor="middle" font-size="13" fill="#6B7280">From trigger to verified fix — the same skills power both paths</text>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- TOP ROW: Triggers + Skill Surface (center)     -->
+  <!-- ═══════════════════════════════════════════════ -->
+
+  <!-- Pre-Production trigger (compact) -->
+  <g filter="url(#sh)">
+    <rect x="30" y="100" width="200" height="54" rx="12" fill="white"/>
+    <rect x="30" y="100" width="200" height="5" rx="2.5" fill="#1098F7"/>
+  </g>
+  <text x="130" y="124" text-anchor="middle" font-size="15" font-weight="600" fill="#0B1120">Pre-Production</text>
+  <text x="130" y="142" text-anchor="middle" font-size="10.5" fill="#6B7280">Build or improve your agent</text>
+
+  <!-- Arrow: Pre-Prod → Skill Surface -->
+  <path d="M 230 127 L 268 127" fill="none" stroke="#1098F7" stroke-width="2" opacity="0.4" marker-end="url(#ar-blue)"/>
+
+  <!-- Post-Production trigger (compact) -->
+  <g filter="url(#sh)">
+    <rect x="830" y="100" width="200" height="54" rx="12" fill="white"/>
+    <rect x="830" y="100" width="200" height="5" rx="2.5" fill="#E35454"/>
+  </g>
+  <text x="930" y="124" text-anchor="middle" font-size="15" font-weight="600" fill="#0B1120">Post-Production</text>
+  <text x="930" y="142" text-anchor="middle" font-size="10.5" fill="#6B7280">Metric drop or regression alert</text>
+
+  <!-- Arrow: Post-Prod → Skill Surface -->
+  <path d="M 830 127 L 792 127" fill="none" stroke="#E35454" stroke-width="2" opacity="0.4" marker-end="url(#ar-coral)"/>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- Skill Surface (center, between triggers)       -->
+  <!-- ═══════════════════════════════════════════════ -->
+
+  <rect x="270" y="74" width="520" height="118" rx="12" fill="white" filter="url(#sh)"/>
+  <rect x="270" y="74" width="520" height="5" rx="2.5" fill="#0B1120"/>
+  <text x="530" y="96" text-anchor="middle" font-size="12" font-weight="600" fill="#0B1120" letter-spacing="0.5">SKILL SURFACE</text>
+  <text x="530" y="110" text-anchor="middle" font-size="10" fill="#6B7280">shared by both paths</text>
+
+  <!-- Skills: left column -->
+  <circle cx="290" cy="128" r="3" fill="#0B1120" opacity="0.3"/>
+  <text x="300" y="132" font-weight="500" font-family="'Geist Mono', 'SF Mono', monospace" font-size="10" fill="#0B1120">eval-engineer</text>
+  <text x="402" y="132" font-size="10" fill="#6B7280">router</text>
+
+  <circle cx="290" cy="146" r="3" fill="#1098F7"/>
+  <text x="300" y="150" font-weight="500" font-family="'Geist Mono', 'SF Mono', monospace" font-size="10" fill="#0B1120">eval-setup</text>
+  <text x="402" y="150" font-size="10" fill="#6B7280">config + dataset</text>
+
+  <circle cx="290" cy="164" r="3" fill="#1098F7"/>
+  <text x="300" y="168" font-weight="500" font-family="'Geist Mono', 'SF Mono', monospace" font-size="10" fill="#0B1120">eval-fetch</text>
+  <text x="402" y="168" font-size="10" fill="#6B7280">import evidence</text>
+
+  <circle cx="290" cy="182" r="3" fill="#E89005"/>
+  <text x="300" y="186" font-weight="500" font-family="'Geist Mono', 'SF Mono', monospace" font-size="10" fill="#0B1120">eval-diagnose</text>
+  <text x="402" y="186" font-size="10" fill="#6B7280">root cause</text>
+
+  <!-- Skills: right column -->
+  <circle cx="550" cy="128" r="3" fill="#E89005"/>
+  <text x="560" y="132" font-weight="500" font-family="'Geist Mono', 'SF Mono', monospace" font-size="10" fill="#0B1120">eval-cost</text>
+  <text x="657" y="132" font-size="10" fill="#6B7280">cost analysis</text>
+
+  <circle cx="550" cy="146" r="3" fill="#1098F7"/>
+  <text x="560" y="150" font-weight="500" font-family="'Geist Mono', 'SF Mono', monospace" font-size="10" fill="#0B1120">eval-measure</text>
+  <text x="657" y="150" font-size="10" fill="#6B7280">metric check</text>
+
+  <circle cx="550" cy="164" r="3" fill="#1098F7"/>
+  <text x="560" y="168" font-weight="500" font-family="'Geist Mono', 'SF Mono', monospace" font-size="10" fill="#0B1120">eval-audit</text>
+  <text x="657" y="168" font-size="10" fill="#6B7280">launch review</text>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- Entry point: /eval-engineer + runtimes         -->
+  <!-- ═══════════════════════════════════════════════ -->
+
+  <line x1="530" y1="192" x2="530" y2="202" stroke="#6B7280" stroke-width="1.5" opacity="0.2"/>
+
+  <rect x="465" y="202" width="130" height="24" rx="12" fill="#0B1120"/>
+  <text x="530" y="219" text-anchor="middle" font-family="'Geist Mono', 'SF Mono', monospace" font-size="11" font-weight="600" fill="white">/eval-engineer</text>
+
+  <!-- Runtime labels: Claude Code & Codex -->
+  <text x="530" y="244" text-anchor="middle" font-size="10">
+    <tspan fill="#6B7280">Runs in </tspan>
+    <tspan font-weight="600" fill="#0B1120">Claude Code</tspan>
+    <tspan fill="#6B7280"> &amp; </tspan>
+    <tspan font-weight="600" fill="#0B1120">Codex</tspan>
+  </text>
+
+  <line x1="530" y1="252" x2="530" y2="270" stroke="#6B7280" stroke-width="2" opacity="0.3" marker-end="url(#ar)"/>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- MAIN FLOW (center column)                      -->
+  <!-- ═══════════════════════════════════════════════ -->
+
+  <!-- Step 1: Fetch Evidence -->
+  <g filter="url(#sh)">
+    <rect x="390" y="274" width="280" height="52" rx="12" fill="white"/>
+    <rect x="390" y="274" width="280" height="5" rx="2.5" fill="#1098F7"/>
+  </g>
+  <circle cx="408" cy="298" r="10" fill="#1098F7" opacity="0.1"/>
+  <text x="408" y="302" text-anchor="middle" font-size="10" font-weight="700" fill="#1098F7">1</text>
+  <text x="540" y="302" text-anchor="middle" font-size="15" font-weight="600" fill="#0B1120">Fetch Evidence</text>
+  <text x="530" y="318" text-anchor="middle" font-family="'Geist Mono', 'SF Mono', monospace" font-size="11" fill="#1098F7">/eval-fetch  ·  /eval-setup</text>
+
+  <line x1="530" y1="326" x2="530" y2="348" stroke="#6B7280" stroke-width="2" opacity="0.3" marker-end="url(#ar)"/>
+
+  <rect x="440" y="352" width="180" height="28" rx="8" fill="#1098F7" opacity="0.07"/>
+  <text x="530" y="371" text-anchor="middle" font-family="'Geist Mono', 'SF Mono', monospace" font-size="11" fill="#1098F7">debug-packet.json</text>
+
+  <line x1="530" y1="380" x2="530" y2="402" stroke="#6B7280" stroke-width="2" opacity="0.3" marker-end="url(#ar)"/>
+
+  <!-- Step 2: Diagnose + Plan -->
+  <g filter="url(#sh)">
+    <rect x="390" y="406" width="280" height="52" rx="12" fill="white"/>
+    <rect x="390" y="406" width="280" height="5" rx="2.5" fill="#E89005"/>
+  </g>
+  <circle cx="408" cy="430" r="10" fill="#E89005" opacity="0.1"/>
+  <text x="408" y="434" text-anchor="middle" font-size="10" font-weight="700" fill="#E89005">2</text>
+  <text x="540" y="434" text-anchor="middle" font-size="15" font-weight="600" fill="#0B1120">Diagnose + Plan</text>
+  <text x="530" y="450" text-anchor="middle" font-family="'Geist Mono', 'SF Mono', monospace" font-size="11" fill="#E89005">/eval-diagnose  ·  /eval-cost</text>
+
+  <line x1="530" y1="458" x2="530" y2="480" stroke="#6B7280" stroke-width="2" opacity="0.3" marker-end="url(#ar)"/>
+
+  <!-- Generated Artifacts -->
+  <rect x="380" y="484" width="300" height="64" rx="10" fill="white" filter="url(#sh)"/>
+  <text x="530" y="506" text-anchor="middle" font-size="12" font-weight="600" fill="#0B1120">Generated Artifacts</text>
+  <g font-family="'Geist Mono', 'SF Mono', monospace" font-size="10.5" fill="#6B7280">
+    <text x="530" y="524" text-anchor="middle">diagnosis.md · fix-plan.md</text>
+    <text x="530" y="540" text-anchor="middle">verification-plan.md</text>
+  </g>
+
+  <line x1="530" y1="548" x2="530" y2="570" stroke="#6B7280" stroke-width="2" opacity="0.3" marker-end="url(#ar)"/>
+
+  <!-- Step 3: Apply Bounded Fix -->
+  <g filter="url(#sh)">
+    <rect x="390" y="574" width="280" height="52" rx="12" fill="white"/>
+    <rect x="390" y="574" width="280" height="5" rx="2.5" fill="#E35454"/>
+  </g>
+  <circle cx="408" cy="598" r="10" fill="#E35454" opacity="0.1"/>
+  <text x="408" y="602" text-anchor="middle" font-size="10" font-weight="700" fill="#E35454">3</text>
+  <text x="540" y="602" text-anchor="middle" font-size="15" font-weight="600" fill="#0B1120">Apply Bounded Fix</text>
+  <text x="530" y="618" text-anchor="middle" font-size="11.5" fill="#6B7280">Edits prompts, tools, and configs</text>
+
+  <!-- Editable files callout -->
+  <g transform="translate(700, 582)">
+    <rect x="0" y="0" width="150" height="36" rx="8" fill="#E35454" opacity="0.05"/>
+    <text x="75" y="15" text-anchor="middle" font-size="10.5" font-weight="500" fill="#E35454">Editable files only</text>
+    <text x="75" y="29" text-anchor="middle" font-family="'Geist Mono', 'SF Mono', monospace" font-size="9.5" fill="#6B7280">prompts/ · tools/ · policy/</text>
+  </g>
+  <line x1="670" y1="600" x2="700" y2="600" stroke="#E35454" stroke-width="1.5" opacity="0.3" stroke-dasharray="4 3"/>
+
+  <line x1="530" y1="626" x2="530" y2="648" stroke="#6B7280" stroke-width="2" opacity="0.3" marker-end="url(#ar)"/>
+
+  <!-- Step 4: Verify -->
+  <g filter="url(#sh)">
+    <rect x="390" y="652" width="280" height="52" rx="12" fill="white"/>
+    <rect x="390" y="652" width="280" height="5" rx="2.5" fill="#58BC82"/>
+  </g>
+  <circle cx="408" cy="676" r="10" fill="#58BC82" opacity="0.1"/>
+  <text x="408" y="680" text-anchor="middle" font-size="10" font-weight="700" fill="#58BC82">4</text>
+  <text x="540" y="680" text-anchor="middle" font-size="15" font-weight="600" fill="#0B1120">Verify</text>
+  <text x="530" y="696" text-anchor="middle" font-size="11.5" fill="#6B7280">pytest + Galileo canary slice</text>
+
+  <!-- Verification packet callout -->
+  <rect x="690" y="668" width="170" height="24" rx="8" fill="#58BC82" opacity="0.07"/>
+  <text x="775" y="685" text-anchor="middle" font-family="'Geist Mono', 'SF Mono', monospace" font-size="9.5" fill="#58BC82">verify-debug-packet.json</text>
+  <line x1="670" y1="680" x2="690" y2="680" stroke="#58BC82" stroke-width="1.5" opacity="0.3" stroke-dasharray="4 3"/>
+
+  <line x1="530" y1="704" x2="530" y2="726" stroke="#6B7280" stroke-width="2" opacity="0.3" marker-end="url(#ar)"/>
+
+  <!-- Result pill -->
+  <rect x="420" y="730" width="220" height="28" rx="8" fill="#58BC82" opacity="0.07"/>
+  <text x="530" y="749" text-anchor="middle" font-family="'Geist Mono', 'SF Mono', monospace" font-size="11" fill="#58BC82">0.33 → 0.83 ✓  PR ready</text>
+
+  <line x1="530" y1="758" x2="530" y2="776" stroke="#E89005" stroke-width="1.5" opacity="0.3" marker-end="url(#ar-amber)"/>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- BOTTOM: Improvement assets                     -->
+  <!-- ═══════════════════════════════════════════════ -->
+
+  <rect x="180" y="780" width="700" height="42" rx="12" fill="white" filter="url(#sh)"/>
+  <text x="530" y="799" text-anchor="middle" font-size="12" font-weight="600" fill="#0B1120">Continuous Improvement Assets</text>
+  <g font-family="'Geist Mono', 'SF Mono', monospace" font-size="10" fill="#6B7280">
+    <text x="530" y="813" text-anchor="middle">candidates.jsonl → eval-dataset/ · sessions/ · learnings.md</text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- RIGHT: Galileo evidence (with experiments)     -->
+  <!-- ═══════════════════════════════════════════════ -->
+
+  <g transform="translate(800, 274)">
+    <rect x="0" y="0" width="220" height="106" rx="10" fill="white" filter="url(#sh)"/>
+    <text x="110" y="22" text-anchor="middle" font-size="11" font-weight="600" fill="#E35454" letter-spacing="0.5">GALILEO EVIDENCE</text>
+
+    <g font-size="11" fill="#0B1120">
+      <circle cx="18" cy="42" r="3" fill="#E35454"/>
+      <text x="28" y="46">Traces + spans</text>
+
+      <circle cx="18" cy="60" r="3" fill="#E35454"/>
+      <text x="28" y="64">Experiment results</text>
+
+      <circle cx="18" cy="78" r="3" fill="#E35454"/>
+      <text x="28" y="82">Metric scores + rationales</text>
+
+      <circle cx="18" cy="96" r="3" fill="#E35454"/>
+      <text x="28" y="100">Log streams + sessions</text>
+    </g>
+  </g>
+
+  <!-- Dashed connector: Step 1 → Evidence -->
+  <line x1="670" y1="300" x2="800" y2="300" stroke="#E35454" stroke-width="1.5" opacity="0.3" stroke-dasharray="4 3"/>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- FEEDBACK LOOP (rendered last = on top)         -->
+  <!-- ═══════════════════════════════════════════════ -->
+
+  <path d="M 390 678 L 28 678 Q 20 678 20 670 L 20 308 Q 20 300 28 300 L 390 300"
+        fill="none" stroke="#E89005" stroke-width="2" opacity="0.35"
+        stroke-dasharray="6 4" marker-end="url(#ar-amber)"/>
+
+  <text x="20" y="489" text-anchor="middle" font-size="10" font-weight="500" fill="#E89005"
+        transform="rotate(-90, 20, 489)">next iteration</text>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- BOTTOM: Galileo logo                           -->
+  <!-- ═══════════════════════════════════════════════ -->
+
+  <text x="462" y="852" font-size="11.5" fill="#6B7280">Powered by</text>
+  <g transform="translate(528, 839) scale(0.12)">
+    <path d="M33.5064 3.174L45.3743 0C45.3743 0 51.4923 18.4184 52.0259 24.8216C53.3047 40.0107 39.0723 53.7371 25.3 52.1547C18.8048 51.4003 0 45.3743 0 45.3743L3.174 33.5064L32.7336 41.4275L11.0952 19.7892L19.7892 11.0952L41.4275 32.7336L33.5064 3.174Z" fill="#E35454"/>
+    <path d="M106.6 45.3743C106.6 45.3743 87.8047 51.4095 81.2911 52.1547C67.5279 53.7371 53.2955 40.0015 54.5651 24.8215C55.1079 18.4183 61.2167 -6.10352e-05 61.2167 -6.10352e-05L73.0847 3.17393L65.1727 32.7335L86.8111 11.0951L95.4959 19.7891L73.8575 41.4275L103.417 33.5063L106.6 45.3743Z" fill="#E35454"/>
+    <path d="M25.3 54.4455C18.7956 55.1907 0 61.2259 0 61.2259L3.174 73.0938L32.7336 65.1726L11.0952 86.811L19.7892 95.505L41.4275 73.8666L33.5064 103.426L45.3743 106.6C45.3743 106.6 51.4923 88.1818 52.0259 81.7786C53.3047 66.5894 39.0723 52.8631 25.3 54.4455Z" fill="#E35454"/>
+    <path d="M61.2167 106.6C61.2167 106.6 55.1079 88.1818 54.5651 81.7786C53.2955 66.5894 67.5279 52.8631 81.2911 54.4455C87.7955 55.1999 106.6 61.2259 106.6 61.2259L103.417 73.0938L73.8575 65.1726L95.4959 86.811L86.8111 95.505L65.1727 73.8666L73.0847 103.426L61.2167 106.6Z" fill="#E35454"/>
+  </g>
+  <text x="543" y="852" font-size="12.5" font-weight="600" fill="#0B1120">Galileo</text>
+</svg>

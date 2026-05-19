@@ -1,0 +1,8 @@
+{
+  "id": "RAG-2",
+  "category": "enterprise_routing",
+  "question": "Can support cancel my enterprise subscription directly?",
+  "expected_answer_terms": ["Enterprise cancellations", "account manager"],
+  "expected_source_ids": ["enterprise-cancellation"]
+}
+

@@ -1,0 +1,36 @@
+[
+  {
+    "account_id": "acct-acme",
+    "name": "Acme Industrial",
+    "tier": "enterprise",
+    "region": "us",
+    "contract_id": "contract-acme-2026",
+    "assigned_account_manager": "Jordan Lee",
+    "admins": ["user-amy-admin"],
+    "support_contacts": ["user-sam-support"],
+    "flags": ["ach_enabled", "legal_hold_enabled"]
+  },
+  {
+    "account_id": "acct-beta",
+    "name": "Beta Health",
+    "tier": "enterprise",
+    "region": "us-regulated",
+    "contract_id": "contract-beta-hipaa-2026",
+    "assigned_account_manager": "Mira Shah",
+    "admins": ["user-betty-admin"],
+    "support_contacts": ["user-bob-support"],
+    "flags": ["regulated_data", "legal_hold_enabled"]
+  },
+  {
+    "account_id": "acct-gamma",
+    "name": "Gamma Startup",
+    "tier": "pro",
+    "region": "eu",
+    "contract_id": "contract-gamma-pro-2026",
+    "assigned_account_manager": null,
+    "admins": ["user-gina-admin"],
+    "support_contacts": ["user-gary-support"],
+    "flags": ["sso_enabled"]
+  }
+]
+

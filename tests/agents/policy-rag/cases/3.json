@@ -1,0 +1,8 @@
+{
+  "id": "RAG-3",
+  "category": "security_data",
+  "question": "I need GDPR data deletion. What should happen next?",
+  "expected_answer_terms": ["Data deletion", "compliance", "identity verification"],
+  "expected_source_ids": ["security-data"]
+}
+

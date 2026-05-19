@@ -1,0 +1,155 @@
+{
+  "agent_tool_loop": {
+    "quality_metrics": ["agentic_session_success", "tool_error_rate"],
+    "baseline": {
+      "run_name": "agent-tool-loop-baseline",
+      "agent_type": "agent",
+      "aggregate_metrics": {
+        "average_cost": 0.018,
+        "average_latency": 6400,
+        "average_llm_span_count": 5.0,
+        "average_tool_call_count": 8.0,
+        "average_retry_count": 2.0,
+        "agentic_session_success": 0.92,
+        "tool_error_rate": 0.04
+      }
+    },
+    "verification": {
+      "run_name": "agent-tool-loop-optimized",
+      "agent_type": "agent",
+      "aggregate_metrics": {
+        "average_cost": 0.011,
+        "average_latency": 3300,
+        "average_llm_span_count": 3.0,
+        "average_tool_call_count": 4.0,
+        "average_retry_count": 0.5,
+        "agentic_session_success": 0.92,
+        "tool_error_rate": 0.03
+      }
+    }
+  },
+  "rag_pruning_regression": {
+    "quality_metrics": ["average_completeness_gpt", "average_groundedness", "average_context_relevance"],
+    "baseline": {
+      "run_name": "rag-pruning-baseline",
+      "agent_type": "rag",
+      "aggregate_metrics": {
+        "average_cost": 0.041,
+        "average_retrieved_context_tokens": 6200,
+        "average_retrieved_document_count": 8,
+        "average_completeness_gpt": 0.96,
+        "average_groundedness": 0.95,
+        "average_context_relevance": 0.78
+      }
+    },
+    "verification": {
+      "run_name": "rag-pruning-too-aggressive",
+      "agent_type": "rag",
+      "aggregate_metrics": {
+        "average_cost": 0.025,
+        "average_retrieved_context_tokens": 2600,
+        "average_retrieved_document_count": 3,
+        "average_completeness_gpt": 0.74,
+        "average_groundedness": 0.95,
+        "average_context_relevance": 0.84
+      }
+    }
+  },
+  "evaluator_sampling": {
+    "quality_metrics": ["average_completeness_gpt", "average_groundedness"],
+    "baseline": {
+      "run_name": "evaluator-full-sampling",
+      "agent_type": "rag",
+      "aggregate_metrics": {
+        "average_evaluator_cost": 0.008,
+        "metric_sampling_rate": 1.0,
+        "total_responses": 100,
+        "average_completeness_gpt": 0.94,
+        "average_groundedness": 0.93
+      }
+    },
+    "verification": {
+      "run_name": "evaluator-targeted-sampling",
+      "agent_type": "rag",
+      "aggregate_metrics": {
+        "average_evaluator_cost": 0.002,
+        "metric_sampling_rate": 0.25,
+        "total_responses": 100,
+        "average_completeness_gpt": 0.94,
+        "average_groundedness": 0.93
+      }
+    }
+  },
+  "model_routing": {
+    "quality_metrics": ["average_intent_accuracy", "average_answer_quality"],
+    "baseline": {
+      "run_name": "single-premium-model",
+      "agent_type": "workflow",
+      "aggregate_metrics": {
+        "average_cost": 0.022,
+        "average_latency": 5100,
+        "average_premium_model_span_count": 3,
+        "average_intent_accuracy": 0.97,
+        "average_answer_quality": 0.93
+      }
+    },
+    "verification": {
+      "run_name": "routed-cheap-classifier",
+      "agent_type": "workflow",
+      "aggregate_metrics": {
+        "average_cost": 0.014,
+        "average_latency": 3600,
+        "average_premium_model_span_count": 1,
+        "average_intent_accuracy": 0.97,
+        "average_answer_quality": 0.93
+      }
+    }
+  },
+  "hidden_segment_regression": {
+    "quality_metrics": ["average_completeness_gpt"],
+    "baseline": {
+      "run_name": "mixed-segment-baseline",
+      "agent_type": "rag",
+      "aggregate_metrics": {
+        "average_cost": 0.04,
+        "average_completeness_gpt": 0.92
+      },
+      "segments": {
+        "consumer": {
+          "aggregate_metrics": {
+            "average_cost": 0.03,
+            "average_completeness_gpt": 0.90
+          }
+        },
+        "enterprise": {
+          "aggregate_metrics": {
+            "average_cost": 0.06,
+            "average_completeness_gpt": 0.95
+          }
+        }
+      }
+    },
+    "verification": {
+      "run_name": "mixed-segment-optimized",
+      "agent_type": "rag",
+      "aggregate_metrics": {
+        "average_cost": 0.03,
+        "average_completeness_gpt": 0.93
+      },
+      "segments": {
+        "consumer": {
+          "aggregate_metrics": {
+            "average_cost": 0.02,
+            "average_completeness_gpt": 0.97
+          }
+        },
+        "enterprise": {
+          "aggregate_metrics": {
+            "average_cost": 0.05,
+            "average_completeness_gpt": 0.75
+          }
+        }
+      }
+    }
+  }
+}

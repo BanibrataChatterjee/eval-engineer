@@ -1,0 +1,8 @@
+{
+  "id": "RAG-1",
+  "category": "billing_refund",
+  "question": "How long does an ACH refund take?",
+  "expected_answer_terms": ["ACH refunds", "7-14 business days"],
+  "expected_source_ids": ["billing-refunds"]
+}
+

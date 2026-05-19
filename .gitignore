@@ -216,3 +216,19 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Eval Engineer generated outputs
+.DS_Store
+.omc/
+.agents/
+.galileo/
+.claude/
+blogs/
+notes/
+docs/superpowers
+tests/**/galileo/
+tests/**/runs/
+tests/**/eval/
+tests/**/reports/
+tests/**/debug-packets/
+tests/**/index/
