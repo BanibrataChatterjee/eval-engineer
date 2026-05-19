@@ -15,6 +15,7 @@ SKILL_DIR = ROOT / "skills" / "eval-engineer"
 SUMMARIZER = SKILL_DIR / "scripts" / "summarize_debug_packet.py"
 TOKENOMICS_COMPARE = SKILL_DIR / "scripts" / "compare_tokenomics_packets.py"
 URL_PARSER = SKILL_DIR / "scripts" / "parse_galileo_url.py"
+LOG_STREAM_FETCHER = SKILL_DIR / "scripts" / "fetch_log_stream_packet.py"
 ASSETS_DIR = SKILL_DIR / "assets"
 TOKENOMICS_SCENARIOS = ROOT / "tests" / "skills" / "fixtures" / "tokenomics-scenarios.json"
 COMMAND_SKILLS = [
@@ -52,6 +53,14 @@ def _load_url_parser():
     return module
 
 
+def _load_log_stream_fetcher():
+    spec = importlib.util.spec_from_file_location("fetch_log_stream_packet", LOG_STREAM_FETCHER)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module
+
+
 def _tokenomics_scenario(name: str) -> dict:
     scenarios = json.loads(TOKENOMICS_SCENARIOS.read_text(encoding="utf-8"))
     return scenarios[name]
@@ -76,11 +85,11 @@ class EvalEngineerSkillTest(unittest.TestCase):
         expectations = {
             "eval-engineer": ["front door", "route", "Current Project State"],
             "eval-setup": [".galileo/config.yml", "Do not guess metrics", "/eval-diagnose"],
-            "eval-fetch": ["Galileo URL", "source.console_url", "project URL", "fetch_ready: true"],
-            "eval-measure": ["metric-profile-checklist.md", "expected-output contract"],
+            "eval-fetch": ["Galileo URL", "source.console_url", "project URL", "fetch_ready: true", "fetch_log_stream_packet.py"],
+            "eval-measure": ["metric-profile-checklist.md", "expected-output contract", "Findings first"],
             "eval-diagnose": ["rca-recipe.md", "fix surface", "Honor read-only requests"],
-            "eval-cost": ["tokenomics-rca.md", "quality metrics do not regress"],
-            "eval-audit": ["OWASP", "Do not fix by default"],
+            "eval-cost": ["tokenomics-rca.md", "quality metrics do not regress", "behavior counters"],
+            "eval-audit": ["OWASP", "Do not fix by default", "Do not read secret values"],
         }
         for skill_name, required_terms in expectations.items():
             text = (ROOT / "skills" / skill_name / "SKILL.md").read_text(encoding="utf-8")
@@ -117,6 +126,99 @@ class EvalEngineerSkillTest(unittest.TestCase):
         self.assertEqual(experiments["artifact_type"], "experiments_index")
         self.assertFalse(experiments["fetch_ready"])
         self.assertIn("specific experiment", " ".join(experiments["next_questions"]))
+
+    def test_log_stream_fetcher_aggregates_scorer_metrics_from_records(self) -> None:
+        module = _load_log_stream_fetcher()
+
+        class Response:
+            def __init__(self, records: list[dict]) -> None:
+                self.records = records
+
+        module.get_traces = lambda *args, **kwargs: Response(
+            [
+                {
+                    "id": "trace-row-1",
+                    "trace_id": "trace-1",
+                    "name": "failed privacy case",
+                    "metrics": {
+                        "context_adherence": 0.25,
+                        "context_adherence_status": "success",
+                        "context_adherence_rationale": "Missed the policy source.",
+                        "context_adherence_ems_error_code": 2013,
+                        "tool_error_rate": 0.0,
+                    },
+                },
+                {
+                    "id": "trace-row-2",
+                    "trace_id": "trace-2",
+                    "name": "passing case",
+                    "metrics": {
+                        "context_adherence": 0.75,
+                        "context_adherence_status": "success",
+                        "tool_error_rate": 0.5,
+                    },
+                },
+            ]
+        )
+        module.get_spans = lambda *args, **kwargs: Response(
+            [
+                {
+                    "id": "span-1",
+                    "trace_id": "trace-1",
+                    "type": "llm",
+                    "name": "answer",
+                    "model": "test-model",
+                    "input": "{\"question\": \"q\"}",
+                    "output": "answer",
+                    "metrics": {"num_input_tokens": 100, "cost": 0.02},
+                },
+                {
+                    "id": "span-2",
+                    "trace_id": "trace-2",
+                    "type": "retriever",
+                    "name": "search",
+                    "metrics": {"duration_ns": 1000},
+                },
+            ]
+        )
+        module.get_sessions = lambda *args, **kwargs: Response([{"id": "session-1", "name": "session"}])
+
+        packet = module.build_packet(
+            project_id="project-123",
+            log_stream_id="log-stream-456",
+            limit=20,
+            source={"console_url": "https://console.example/project/project-123/log-streams/log-stream-456"},
+        )
+
+        self.assertEqual(packet["source_type"], "log_stream")
+        self.assertEqual(packet["source"]["log_stream_id"], "log-stream-456")
+        self.assertEqual(packet["aggregate_metrics"]["average_context_adherence"], 0.5)
+        self.assertEqual(packet["aggregate_metrics"]["average_tool_error_rate"], 0.25)
+        self.assertNotIn("average_context_adherence_ems_error_code", packet["aggregate_metrics"])
+        self.assertNotIn("context_adherence_ems_error_code", packet["scorer_metrics"])
+        self.assertEqual(packet["aggregate_metrics"]["average_num_input_tokens"], 100)
+        self.assertEqual(packet["aggregate_metrics"]["average_cost"], 0.02)
+        self.assertEqual(packet["aggregate_metrics"]["total_responses"], 2)
+        self.assertEqual(packet["scorer_metrics"]["context_adherence"]["success"], 2)
+        self.assertEqual(packet["metric_fetch_status"], "ok")
+        self.assertIn("context_adherence", packet["traces"][0]["scores"])
+
+    def test_log_stream_fetcher_marks_missing_scorer_metrics(self) -> None:
+        module = _load_log_stream_fetcher()
+
+        class Response:
+            def __init__(self, records: list[dict]) -> None:
+                self.records = records
+
+        module.get_traces = lambda *args, **kwargs: Response([{"trace_id": "trace-1", "metrics": {}}])
+        module.get_spans = lambda *args, **kwargs: Response([{"id": "span-1", "type": "llm", "metrics": {}}])
+        module.get_sessions = lambda *args, **kwargs: Response([])
+
+        packet = module.build_packet(project_id="project-123", log_stream_id="log-stream-456", limit=20)
+
+        self.assertEqual(packet["metric_fetch_status"], "missing_metric_results")
+        self.assertEqual(packet["aggregate_metrics"]["total_responses"], 1)
+        self.assertEqual(packet["scorer_metrics"], {})
 
     def test_skill_description_is_portable(self) -> None:
         skill_text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
@@ -447,6 +549,34 @@ class EvalEngineerSkillTest(unittest.TestCase):
         self.assertIn("average_source_authority", result["quality"])
         self.assertNotIn("average_num_input_tokens", result["quality"])
         self.assertNotIn("average_wall_time_ns", result["quality"])
+
+    def test_tokenomics_compare_does_not_infer_handoff_counts_as_quality(self) -> None:
+        module = _load_tokenomics_compare()
+        baseline = {
+            "run_name": "handoff-baseline",
+            "aggregate_metrics": {
+                "average_cost": 0.002,
+                "average_num_total_tokens": 800.0,
+                "average_handoff_count": 1.0,
+                "average_case_success": 1.0,
+            },
+        }
+        verification = {
+            "run_name": "handoff-verification",
+            "aggregate_metrics": {
+                "average_cost": 0.001,
+                "average_num_total_tokens": 600.0,
+                "average_handoff_count": 0.0,
+                "average_case_success": 1.0,
+            },
+        }
+
+        result = module.compare(baseline, verification, [])
+
+        self.assertEqual(result["decision"], "keep-candidate: cost evidence improved and quality did not regress")
+        self.assertIn("average_handoff_count", result["cost"])
+        self.assertNotIn("average_handoff_count", result["quality"])
+        self.assertEqual(result["cost"]["average_handoff_count"]["classification"], "efficiency")
 
     def test_tokenomics_compare_rejects_when_higher_is_better_quality_drops(self) -> None:
         module = _load_tokenomics_compare()

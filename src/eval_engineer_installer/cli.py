@@ -31,6 +31,7 @@ CORE_REQUIRED_FILES = (
     "scripts/summarize_debug_packet.py",
     "scripts/compare_tokenomics_packets.py",
     "scripts/parse_galileo_url.py",
+    "scripts/fetch_log_stream_packet.py",
 )
 PROJECT_SCAFFOLD_DIRS = (
     ".galileo/current",

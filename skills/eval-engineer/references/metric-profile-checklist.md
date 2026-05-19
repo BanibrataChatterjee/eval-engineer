@@ -21,6 +21,10 @@ Every meaningful case or production segment should define:
 - `expected_decision`: the expected route, refusal, action, or answer type
 - `required_citations`: sources that must be retrieved, used, or cited
 - `forbidden_citations`: stale, untrusted, irrelevant, or unsafe sources
+- `required_retrieved_sources`: sources or source classes that must be present
+  in retrieved context when final citations alone cannot prove coverage
+- `forbidden_retrieved_sources`: source IDs or source classes that must not
+  enter the task context, even if the final answer does not cite them
 - `required_tools`: tools or workflow steps required for this risk profile
 - `required_answer_terms`: obligations that must appear in the answer
 - `forbidden_answer_terms`: unsafe, stale, private, or misleading claims
@@ -44,6 +48,10 @@ Every meaningful case or production segment should define:
 - Use `chunk_attribution_utilization` when the RCA needs to know which chunks
   influenced the answer or whether useful chunks were ignored.
 - Track required and forbidden citations locally when source authority matters.
+- Track retrieved source IDs separately from final citations for prompt
+  injection, privacy, stale-source, and source-authority cases. A final answer
+  can be safe while unsafe context was still retrieved and exposed to the
+  model.
 
 ### Safety And Compliance
 
@@ -88,6 +96,8 @@ Before keeping a fix or cost-reduction candidate, state:
 6. Which metric gap remains if Galileo or the local packet cannot measure the
    risk directly.
 7. Which local metrics are independent observations versus agent self-reports.
+8. Whether retrieval-source gates are needed in addition to final-answer and
+   citation gates.
 
 Use `assets/metric-profile-template.md` when writing this into an RCA artifact,
 fixture README, or eval dataset proposal.

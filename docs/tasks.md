@@ -180,7 +180,7 @@
   `/Users/pratik/Documents/github/test` with Claude Code CLI, capture UX
   learnings, and harden read-only, fetch-readiness, and next-command behavior
   (`GAL-112`).
-- [ ] Run external end-to-end robustness iterations across independent test
+- [x] Run external end-to-end robustness iterations across independent test
   projects, with real Galileo log streams/experiments, Eval Engineer RCA,
   skill improvements, and documented learnings (`GAL-113`).
 
@@ -189,9 +189,13 @@
 - [ ] Harden Galileo Python SDK compatibility and update strategy (`GAL-114`).
 - [ ] Make Galileo URL fetch end-to-end for common production RCA URLs
   (`GAL-115`).
+  - [x] Implement real `/eval-fetch` support for log-stream aggregate scorer
+    metrics via `fetch_log_stream_packet.py`.
 - [ ] Resolve or clearly gate Galileo function-experiment scorer failures
   (`GAL-116`).
 - [ ] Add a multi-turn or handoff robustness fixture before public release
   (`GAL-117`).
 - [ ] Prepare alpha release docs with exact capabilities and limitations
   (`GAL-118`).
+- [ ] Harden command UX around RAG/agent metric fetch, missing scorer
+  aggregates, behavior-counter inference, and secret-safe audits (`GAL-119`).

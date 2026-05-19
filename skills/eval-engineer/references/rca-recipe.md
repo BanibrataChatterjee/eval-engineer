@@ -136,6 +136,10 @@ patterns in the skill reference and `.galileo/learnings.md`.
   and rationales.
 - A metric can pass while another behavior remains wrong. Treat that as a new
   metric/eval gap, not as evidence that the whole user experience is fixed.
+- A final answer can be safe while retrieved context is unsafe. For
+  source-authority, privacy, and prompt-injection RCA, inspect retrieved source
+  IDs and forbidden retrieved sources, not only final citations and answer
+  terms.
 - If no spans are scored, diagnose metric coverage or output normalization
   before diagnosing app behavior.
 - If provider behavior is unstable across runs, compare traces before changing

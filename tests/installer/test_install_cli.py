@@ -40,6 +40,10 @@ class EvalEngineerInstallerTest(unittest.TestCase):
                 core_dir = base / "skills" / "eval-engineer"
                 self.assertTrue((core_dir / "references" / "tokenomics-rca.md").is_file())
                 self.assertTrue((core_dir / "scripts" / "summarize_debug_packet.py").is_file())
+                self.assertTrue((core_dir / "scripts" / "fetch_log_stream_packet.py").is_file())
+
+    def test_log_stream_fetcher_is_a_required_core_script(self) -> None:
+        self.assertIn("scripts/fetch_log_stream_packet.py", cli.CORE_REQUIRED_FILES)
 
     def test_project_install_scaffolds_galileo_workspace_without_overwrite(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:

@@ -31,11 +31,23 @@ Preserve source metadata in the packet:
   experiment, or comparison pair.
 - Log stream URL: ask for latest N traces, failed traces, time window, or
   aggregate metrics if the user did not specify.
+- Log stream aggregate metrics: use
+  `skills/eval-engineer/scripts/fetch_log_stream_packet.py` with `--url` or
+  `--project-id` plus `--log-stream-id`. This fetches traces, spans, sessions,
+  aggregates numeric scorer metrics into `.galileo/current/debug-packet.json`,
+  and reports `metric_fetch_status`.
 - Trace/session URL: fetch that artifact and ask whether to compare against a
   baseline only if needed.
 - If the URL parser returns `fetch_ready: true`, say the Galileo artifact is
   resolved. If a slice is still needed, ask which slice to fetch; do not label
   the URL as not fetch-ready.
+- If the current repo has no fetch helper, SDK method, API route, or saved
+  packet capable of fetching the requested aggregate, say `fetch implementation gap`.
+  Do not imply that scorer aggregates, trace lists, or
+  metric distributions were fetched when the command only parsed the URL.
+- If `fetch_log_stream_packet.py` writes a packet with
+  `metric_fetch_status: missing_metric_results`, say the fetch worked but
+  Galileo did not return scored metrics for the requested slice.
 
 ## Output
 

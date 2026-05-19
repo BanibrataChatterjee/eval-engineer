@@ -23,6 +23,10 @@ Use `skills/eval-engineer/references/tokenomics-rca.md`,
 - Run `compare_tokenomics_packets.py` without explicit quality metrics first
   when packets use custom quality names, then inspect the inferred
   `Quality metrics compared` list before accepting the decision.
+- Treat behavior counters such as handoff count, tool count, step count,
+  retry count, and self-check count as efficiency or workflow evidence, not
+  quality gates by default. Promote one to quality only when the metric profile
+  states the desired direction for that route or segment.
 - Protect named quality metrics and segment gates.
 - Reject cheaper candidates when quality metrics do not regress only in the
   aggregate but fail a segment.
@@ -31,5 +35,5 @@ Use `skills/eval-engineer/references/tokenomics-rca.md`,
 
 ## Output
 
-State keep/reject/inconclusive. Explain why the cost moved and which quality
-metrics do not regress.
+State keep/reject/inconclusive first. Explain why the cost moved, which quality
+metrics do not regress, and which latency/tool-count tradeoffs remain.

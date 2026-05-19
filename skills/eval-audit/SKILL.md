@@ -20,6 +20,14 @@ code, metrics, and workflow coverage. Do not fix by default.
 - Launch readiness: failure cases, rollback criteria, verification commands,
   privacy/PII risks, and production monitoring gaps.
 
+## Secret Handling
+
+Do not read secret values from `.env`, shell history, key files, or credential
+stores during an audit. It is okay to report variable names, expected variable
+presence, whether `.env` is ignored by git, and whether a project is a git repo.
+If values were already exposed in chat, logs, or committed files, recommend
+rotation; do not infer compromise merely because a local ignored `.env` exists.
+
 ## Output
 
 Produce findings first, ordered by severity. Include evidence references and

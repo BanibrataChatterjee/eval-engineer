@@ -27,6 +27,9 @@ Read these Galileo evidence fields when present:
 - LLM span model names, input/output/total tokens, duration, status code, and
   tool definitions passed to the model
 - retriever span document counts, retrieved context size, status, and metadata
+- retrieved source IDs, source authority, and forbidden retrieved sources when
+  privacy, prompt injection, stale policy, or source authority is part of the
+  quality contract
 - tool span counts, arguments, status, duration, and error patterns
 - agent tool loops: LLM span count, tool-call count, retry count, failed-call
   share, and whether each step advances the task
@@ -107,6 +110,9 @@ Answer these in order before proposing a fix:
   context actually cited or used.
 - Lower `top_k` only when context relevance, groundedness, and answer quality do
   not regress.
+- Do not judge retrieval safety only from final citations. If an untrusted,
+  stale, or injected document enters context, record that as source-authority
+  evidence even when the final answer avoided citing it.
 - Verify multi-hop and case-level policy questions, not only easy single-source
   questions; an aggregate score can hide a missing source in one high-risk case.
 - Prefer dedupe/rerank before summarizing context; summarization can hide needed

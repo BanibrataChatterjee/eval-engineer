@@ -477,3 +477,43 @@ The two completed external fixtures now cover RAG-like claim triage and
 SQL/tool revenue operations. A next test should stress either multi-turn memory
 or multi-agent handoff, because current coverage is still single-session and
 deterministic.
+
+## 2026-05-19
+
+### Command UX And Metric Scope
+
+- Tested all installed command skills in `/Users/pratik/Documents/github/test-may-19`:
+  `/eval-engineer`, `/eval-setup`, `/eval-fetch`, `/eval-measure`,
+  `/eval-diagnose`, `/eval-cost`, and `/eval-audit`.
+- Captured the command behavior review in
+  `docs/command-ux-rag-agent-metrics-2026-05-19.md`.
+- Confirmed the most important improvement scope is metric attestation rather
+  than more fixture construction: fetch log-stream scorer aggregates, gate
+  experiment artifacts when quality/scorer aggregates are absent, and make
+  retrieved-source authority first-class (`GAL-119`).
+- Hardened command guidance:
+  - `/eval-fetch` must call out `fetch implementation gap` when parsing works
+    but aggregate fetch support is unavailable.
+  - `/eval-measure` now leads findings first and requires retrieved-source
+    gates plus independent safety observations.
+  - `/eval-cost` now treats behavior counters such as handoff count as
+    efficiency/workflow evidence unless a metric profile gives a route-specific
+    quality direction.
+  - `/eval-audit` now forbids reading secret values and limits itself to
+    variable names, presence, git-ignore coverage, and exposure evidence.
+
+### Log Stream Aggregate Fetch
+
+- Added `skills/eval-engineer/scripts/fetch_log_stream_packet.py` for
+  `/eval-fetch` log-stream aggregate support (`GAL-115`).
+- The helper accepts a Galileo log-stream URL or explicit `--project-id` and
+  `--log-stream-id`, fetches traces, spans, and sessions through
+  `galileo.search`, aggregates numeric scorer metrics, writes
+  `.galileo/current/debug-packet.json` by default, and reports
+  `metric_fetch_status`.
+- Live-verified against guarded handoff RAG log stream
+  `9fadd959-492a-4945-8933-d5831f93ad47`: URL mode returned
+  `metric_fetch_status=ok`, 2 traces, 10 spans, 51 aggregate metrics, and 28
+  scorer metric families from the installed project skill.
+- Filtered Galileo `*_ems_error_code` fields out of aggregates so status
+  metadata is not confused with quality metrics.

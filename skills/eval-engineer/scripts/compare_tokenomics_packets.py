@@ -49,6 +49,7 @@ EFFICIENCY_TERMS = (
     "evaluator",
     "sampling_rate",
     "cache_miss",
+    "handoff_count",
 )
 LOWER_IS_BETTER_QUALITY_TERMS = (
     "error_rate",
