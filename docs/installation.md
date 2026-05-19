@@ -27,6 +27,7 @@ The command skills are:
 | `/eval-engineer` | Front door, project readiness, routing, and concise education. |
 | `/eval-setup` | Prepare or inspect `.galileo/`, config, editable files, and verification commands. |
 | `/eval-fetch` | Parse Galileo URLs/IDs and bring evidence into `.galileo/current/debug-packet.json`. |
+| `/eval-dataset` | Create, review, accept, or reject `.galileo/eval-dataset/` cases. |
 | `/eval-measure` | Define metric profiles and expected-output contracts before optimizing. |
 | `/eval-diagnose` | Diagnose root cause from fetched traces, spans, sessions, and metrics. |
 | `/eval-cost` | Reduce token, latency, tool, model, retrieval, and evaluator cost while protecting quality. |

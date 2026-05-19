@@ -40,6 +40,8 @@ Do not dump general docs. Name the smallest useful next step.
 - Use `/eval-setup` when `.galileo/` or verification config is missing.
 - Use `/eval-fetch` when the user provides a Galileo URL/ID or needs evidence
   pulled into `.galileo/current/debug-packet.json`.
+- Use `/eval-dataset` when the user wants to create, review, accept, reject,
+  or improve eval cases under `.galileo/eval-dataset/`.
 - Use `/eval-measure` when the question is whether metrics, rubrics, or
   expected-output contracts are correct.
 - Use `/eval-diagnose` when a debug packet or fetched evidence is ready and the
@@ -99,6 +101,7 @@ will get it.
    - If useful, append a concise general pattern to `.galileo/learnings.md`.
 
 5. **Create candidate eval cases carefully.**
+   - Use `/eval-dataset` for candidate, accepted, and rejected case workflows.
    - Propose candidates only for clear, reusable failures.
    - Avoid duplicates, ambiguous cases, and sensitive data.
    - Write candidates to `.galileo/eval-dataset/candidates.jsonl` only when the
@@ -132,6 +135,7 @@ will get it.
 
 - Working-set structure: `references/working-set.md`
 - Debug packet schema and usage: `references/debug-packets.md`
+- Eval dataset case design: `references/eval-datasets.md`
 - Galileo evidence sources: `references/galileo-sources.md`
 - Galileo metric selection: `references/metrics.md`
 - Metric-profile checklist for cases and segments:

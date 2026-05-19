@@ -22,6 +22,7 @@ COMMAND_SKILLS = [
     "eval-engineer",
     "eval-setup",
     "eval-fetch",
+    "eval-dataset",
     "eval-measure",
     "eval-diagnose",
     "eval-cost",
@@ -83,9 +84,17 @@ class EvalEngineerSkillTest(unittest.TestCase):
         self.assertEqual(len(set(descriptions.values())), len(COMMAND_SKILLS))
 
         expectations = {
-            "eval-engineer": ["front door", "route", "Current Project State"],
+            "eval-engineer": ["front door", "route", "Current Project State", "/eval-dataset"],
             "eval-setup": [".galileo/config.yml", "Do not guess metrics", "/eval-diagnose"],
             "eval-fetch": ["Galileo URL", "source.console_url", "project URL", "fetch_ready: true", "fetch_log_stream_packet.py"],
+            "eval-dataset": [
+                "references/eval-datasets.md",
+                ".galileo/eval-dataset/candidates.jsonl",
+                "Follow the user-provided schema",
+                "Do not promote",
+                "Do not force Eval Engineer fields",
+                "changelog.md",
+            ],
             "eval-measure": ["metric-profile-checklist.md", "expected-output contract", "Findings first"],
             "eval-diagnose": ["rca-recipe.md", "fix surface", "Honor read-only requests"],
             "eval-cost": ["tokenomics-rca.md", "quality metrics do not regress", "behavior counters"],
@@ -126,6 +135,80 @@ class EvalEngineerSkillTest(unittest.TestCase):
         self.assertEqual(experiments["artifact_type"], "experiments_index")
         self.assertFalse(experiments["fetch_ready"])
         self.assertIn("specific experiment", " ".join(experiments["next_questions"]))
+
+    def test_eval_dataset_skill_requires_claimed_source_gates_in_fields(self) -> None:
+        text = (ROOT / "skills" / "eval-dataset" / "SKILL.md").read_text(encoding="utf-8")
+        reference = (SKILL_DIR / "references" / "eval-datasets.md").read_text(encoding="utf-8")
+
+        self.assertIn("references/eval-datasets.md", text)
+        self.assertIn("Follow the user-provided schema", text)
+        self.assertIn("Do not force Eval Engineer fields", text)
+        self.assertIn("If notes or summaries name a forbidden source", reference)
+        self.assertIn("Only add `forbidden_retrieved_sources`", reference)
+
+    def test_eval_dataset_reference_bootstraps_metric_caught_failure_cases(self) -> None:
+        reference = SKILL_DIR / "references" / "eval-datasets.md"
+        self.assertTrue(reference.is_file(), reference)
+        text = reference.read_text(encoding="utf-8")
+
+        required_terms = [
+            "Bootstrap By Use Case",
+            "RAG",
+            "tool-calling agent",
+            "multi-turn",
+            "Failure Trigger",
+            "Metric That Should Catch It",
+            "prompt_injection",
+            "output_pii",
+            "context_relevance",
+            "tool_selection_quality",
+            "agentic_workflow_success",
+            "forbidden_retrieved_sources",
+        ]
+        for term in required_terms:
+            self.assertIn(term, text)
+
+    def test_eval_dataset_reference_allows_user_or_existing_schema(self) -> None:
+        text = (SKILL_DIR / "references" / "eval-datasets.md").read_text(encoding="utf-8")
+
+        required_terms = [
+            "Schema Precedence",
+            "user-provided schema",
+            "existing Galileo dataset schema",
+            "Do not force Eval Engineer fields",
+            "Optional Review Metadata",
+            "Minimal Galileo Upload",
+            "schema_overrides",
+            "only when",
+        ]
+        for term in required_terms:
+            self.assertIn(term, text)
+
+    def test_eval_dataset_reference_documents_galileo_sdk_dataset_usage(self) -> None:
+        text = (SKILL_DIR / "references" / "eval-datasets.md").read_text(encoding="utf-8")
+
+        required_terms = [
+            "Galileo SDK Usage",
+            "from galileo.datasets import create_dataset, get_dataset, list_datasets",
+            "from galileo.experiments import run_experiment",
+            "create_dataset(",
+            "get_dataset(",
+            "dataset.add_rows(",
+            "list_datasets(",
+            "run_experiment(",
+            "dataset_name=",
+            '"generated_output"',
+            '"ground_truth"',
+            '"metadata"',
+            "metadata values must be strings",
+            '"output"',
+            "function experiments in `galileo==1.39.0`",
+            "requested scorer aggregates may be absent",
+            "dataset version",
+            "Do not put secret values",
+        ]
+        for term in required_terms:
+            self.assertIn(term, text)
 
     def test_log_stream_fetcher_aggregates_scorer_metrics_from_records(self) -> None:
         module = _load_log_stream_fetcher()

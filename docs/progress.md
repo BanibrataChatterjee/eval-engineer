@@ -517,3 +517,49 @@ deterministic.
   scorer metric families from the installed project skill.
 - Filtered Galileo `*_ems_error_code` fields out of aggregates so status
   metadata is not confused with quality metrics.
+
+### Eval Dataset Skill
+
+- Added `/eval-dataset` as a focused command skill for candidate, accepted, and
+  rejected eval case workflows (`GAL-120`).
+- The skill writes new cases to `.galileo/eval-dataset/candidates.jsonl`,
+  preserves expected behavior and review context where the chosen schema can
+  carry them, and blocks promotion when required behavior, gates, metrics, or
+  review status are incomplete.
+- Installed the updated bundle into `/Users/pratik/Documents/github/test-may-19`
+  for Codex and Claude, then tested `/eval-dataset` with Claude Code against
+  `.galileo/current/debug-packet.json`.
+- The live test created candidate `cand-privacy-injection-ssn-leak-001` for the
+  MT-3 prompt-injection/PII/source-authority failure, then a follow-up review
+  fixed the case so `forbidden_retrieved_sources` explicitly includes
+  `ticket_injection_note`.
+- Moved reusable dataset logic into
+  `skills/eval-engineer/references/eval-datasets.md` so `/eval-dataset` stays a
+  thin command skill. The reference now includes bootstrap guidance for RAG,
+  tool-calling agents, multi-turn flows, workflows, safety/compliance, and
+  tokenomics cases, with failure triggers mapped to the metrics that should
+  catch them.
+- Folded the official Galileo datasets SDK workflow into the shared reference:
+  standard dataset fields (`input`, `generated_output`, `ground_truth`,
+  `metadata`), `create_dataset` / `get_dataset` / `list_datasets`,
+  `dataset.add_rows`, and `run_experiment(..., dataset_name=..., function=...)`
+  for RAG or agent app paths.
+- Live-tested the dataset SDK against Galileo project `eval-engineer` on
+  2026-05-19:
+  - `create_dataset`, `get_dataset`, and `list_datasets` worked for
+    `eval-engineer-sdk-smoke-stringmeta-20260519T131246Z`.
+  - `dataset.add_rows` worked for flat string-valued `input` / `output` rows
+    with string-only metadata in
+    `eval-engineer-sdk-addrows-minimal-20260519T131404Z`, creating a second
+    dataset version with 2 rows.
+  - `run_experiment(..., dataset_name=..., function=...)` created Galileo
+    experiment `7fc89a59-2b9a-4547-b886-25101ee1cf7c`, but aggregate metrics
+    only contained latency/response counts, not the requested scorer metrics.
+  - A nested metadata list caused `DatasetRecord` validation failure:
+    metadata dictionary values must be strings for the function-experiment
+    path in `galileo==1.39.0`.
+- Simplified dataset guidance after review: `/eval-dataset` now follows a
+  user-provided schema first, an existing Galileo dataset schema second, the app
+  runner shape third, and Galileo's minimal upload fields when no schema exists.
+  Eval Engineer review fields are optional metadata rather than mandatory upload
+  columns.

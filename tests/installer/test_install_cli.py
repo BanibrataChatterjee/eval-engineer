@@ -37,6 +37,7 @@ class EvalEngineerInstallerTest(unittest.TestCase):
                 for skill_name in cli.SKILL_NAMES:
                     skill_dir = base / "skills" / skill_name
                     self.assertTrue((skill_dir / "SKILL.md").is_file(), skill_dir)
+                self.assertTrue((base / "skills" / "eval-dataset" / "SKILL.md").is_file())
                 core_dir = base / "skills" / "eval-engineer"
                 self.assertTrue((core_dir / "references" / "tokenomics-rca.md").is_file())
                 self.assertTrue((core_dir / "scripts" / "summarize_debug_packet.py").is_file())
