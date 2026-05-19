@@ -14,6 +14,73 @@ gives a coding agent the loop it needs to inspect Galileo traces and metrics,
 diagnose the failure, make one bounded change, and verify whether the next run
 actually improved.
 
+## Quick Installation
+
+Install Eval Engineer into the project you want to debug or improve:
+
+```bash
+uvx --from git+https://github.com/Galileo-Agent-Labs/eval-engineer.git \
+  eval-engineer install --target both --scope project --project-dir .
+```
+
+Project install writes skills into `.agents/skills/eval-*` for Codex and
+`.claude/skills/eval-*` for Claude Code. It also prepares a minimal `.galileo/`
+workspace without overwriting existing files.
+
+Start a new Claude Code or Codex session from this same project folder after
+installing. Codex discovers project skills from `.agents/skills` in the current
+directory and its parents; if Codex was opened somewhere else, it will not see
+this project's skills.
+
+Claude Code surfaces the skills as slash commands:
+
+```text
+/eval-engineer   front door, readiness check, router, and short explanation
+/eval-setup      prepare or inspect the .galileo workspace
+/eval-fetch      turn Galileo URLs/IDs into local debug packets
+/eval-measure    choose metrics and expected-output contracts
+/eval-diagnose   perform RCA from traces, spans, sessions, and metrics
+/eval-cost       reduce cost while protecting quality metrics
+/eval-audit      review launch, safety, OWASP, and coverage risk
+```
+
+Codex surfaces the same skills as `$` mentions:
+
+```text
+$eval-engineer   front door, readiness check, router, and short explanation
+$eval-setup      prepare or inspect the .galileo workspace
+$eval-fetch      turn Galileo URLs/IDs into local debug packets
+$eval-measure    choose metrics and expected-output contracts
+$eval-diagnose   perform RCA from traces, spans, sessions, and metrics
+$eval-cost       reduce cost while protecting quality metrics
+$eval-audit      review launch, safety, OWASP, and coverage risk
+```
+
+If the skills do not appear, restart the host agent. For Codex, also confirm the
+skills were installed under the project you opened:
+
+```bash
+find .agents/skills -maxdepth 2 -name SKILL.md | sort
+```
+
+The first useful prompt is usually:
+
+```text
+$eval-engineer inspect this project and tell me the best next step.
+```
+
+In Claude Code, use `/eval-engineer` instead. If you already have Galileo
+evidence, start with the artifact you have:
+
+```text
+$eval-fetch https://app.galileo.ai/.../log-streams/...
+$eval-diagnose .galileo/current/debug-packet.json
+$eval-cost compare the baseline and verification packets
+```
+
+See `docs/installation.md` for user-scope installs, detailed command behavior,
+and plugin packaging guidance.
+
 ## Why This Matters
 
 AI failures rarely live in source code alone. The important evidence is often in
@@ -87,74 +154,7 @@ The skill is intentionally general. The first fixture is a tool-calling support
 agent, but Eval Engineer is meant to work across agents, RAG apps, workflows,
 providers, experiments, log streams, and custom metrics.
 
-## Install And Start
-
-Install Eval Engineer into the project you want to debug or improve:
-
-```bash
-uvx --from git+https://github.com/Galileo-Agent-Labs/eval-engineer.git \
-  eval-engineer install --target both --scope project --project-dir .
-```
-
-Project install writes skills into `.agents/skills/eval-*` for Codex and
-`.claude/skills/eval-*` for Claude Code. It also prepares a minimal `.galileo/`
-workspace without overwriting existing files.
-
-Start a new Claude Code or Codex session from this same project folder after
-installing. Codex discovers project skills from `.agents/skills` in the current
-directory and its parents; if Codex was opened somewhere else, it will not see
-this project's skills.
-
-Claude Code surfaces the skills as slash commands:
-
-```text
-/eval-engineer   front door, readiness check, router, and short explanation
-/eval-setup      prepare or inspect the .galileo workspace
-/eval-fetch      turn Galileo URLs/IDs into local debug packets
-/eval-measure    choose metrics and expected-output contracts
-/eval-diagnose   perform RCA from traces, spans, sessions, and metrics
-/eval-cost       reduce cost while protecting quality metrics
-/eval-audit      review launch, safety, OWASP, and coverage risk
-```
-
-Codex surfaces the same skills as `$` mentions:
-
-```text
-$eval-engineer   front door, readiness check, router, and short explanation
-$eval-setup      prepare or inspect the .galileo workspace
-$eval-fetch      turn Galileo URLs/IDs into local debug packets
-$eval-measure    choose metrics and expected-output contracts
-$eval-diagnose   perform RCA from traces, spans, sessions, and metrics
-$eval-cost       reduce cost while protecting quality metrics
-$eval-audit      review launch, safety, OWASP, and coverage risk
-```
-
-If the skills do not appear, restart the host agent. For Codex, also confirm the
-skills were installed under the project you opened:
-
-```bash
-find .agents/skills -maxdepth 2 -name SKILL.md | sort
-```
-
-The first useful prompt is usually:
-
-```text
-$eval-engineer inspect this project and tell me the best next step.
-```
-
-In Claude Code, use `/eval-engineer` instead. If you already have Galileo
-evidence, start with the artifact you have:
-
-```text
-$eval-fetch https://app.galileo.ai/.../log-streams/...
-$eval-diagnose .galileo/current/debug-packet.json
-$eval-cost compare the baseline and verification packets
-```
-
-See `docs/installation.md` for user-scope installs, detailed command behavior,
-and plugin packaging guidance.
-
-## What Lives In This Repo
+## Repo Structure
 
 This repo separates the reusable skill, the installer, the test fixtures, and
 the project notes. The split matters: users install the skill into their own
