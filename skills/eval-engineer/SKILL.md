@@ -1,13 +1,17 @@
 ---
 name: eval-engineer
-description: Use when a user needs a front door for Galileo-backed eval work, is unsure which eval command to use, or asks to inspect AI agents/RAG apps with traces, metrics, URLs, or production symptoms.
+description: Use when a user is unsure which Eval Engineer command to run for AI agents/RAG apps, needs onboarding/status for a .galileo workspace, or asks where to start.
 ---
 
 # Eval Engineer
 
-Use this skill as the front door for Galileo-backed eval engineering. It should
-educate the user just enough to choose the right workflow, inspect current
-project readiness, and route to the focused command skill that matches the job.
+Use this skill as the front door for Galileo-backed eval engineering. Keep it
+as a router: inspect current project readiness, educate the user only enough to
+choose the workflow, and route to the focused command skill that matches the
+job.
+
+If a focused skill clearly applies, use that focused skill directly instead of
+running the full core loop here.
 
 ## Current Project State
 

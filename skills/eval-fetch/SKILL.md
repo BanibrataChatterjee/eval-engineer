@@ -1,12 +1,15 @@
 ---
 name: eval-fetch
-description: Use when a user provides Galileo URLs, project IDs, log stream IDs, experiment IDs, session IDs, trace IDs, or asks to bring Galileo evidence into the repo.
+description: Use when a user asks to fetch Galileo evidence, provides Galileo URLs or IDs, says "fetch this Galileo link", or needs traces, sessions, experiments, or log streams saved locally.
 ---
 
 # Eval Fetch
 
 Use this skill to turn messy Galileo console links and IDs into local evidence.
 The goal is a grounded debug packet, not a diagnosis.
+
+Do not print secret values. Report only credential variable names, whether
+expected variables are present, and the exact fetch blocker.
 
 ## First Parse The Input
 
@@ -48,6 +51,28 @@ Preserve source metadata in the packet:
 - If `fetch_log_stream_packet.py` writes a packet with
   `metric_fetch_status: missing_metric_results`, say the fetch worked but
   Galileo did not return scored metrics for the requested slice.
+
+## Gotchas
+
+- Parsing a URL is not fetching evidence. Do not imply scorer aggregates, trace
+  lists, or metric distributions were fetched unless a fetch helper or saved
+  packet actually produced them.
+- Function experiments may produce system token and latency metrics while
+  requested scorer aggregates are absent. Treat that as missing quality evidence,
+  not as a passing quality result.
+- If a project URL resolves but no slice is specified, ask for the smallest
+  useful slice instead of marking the URL unusable.
+
+## Validation Loop
+
+After fetching or writing a packet:
+
+1. Confirm `.galileo/current/debug-packet.json` exists or name the output path.
+2. Check that `source` metadata and stable artifact IDs are present.
+3. Run `python3 skills/eval-engineer/scripts/summarize_debug_packet.py <packet>`
+   when a packet was written.
+4. If validation fails, revise the fetch command, packet, or blocker statement
+   before routing to `/eval-diagnose`, `/eval-measure`, or `/eval-cost`.
 
 ## Output
 

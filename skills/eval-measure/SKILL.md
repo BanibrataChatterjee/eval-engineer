@@ -1,6 +1,6 @@
 ---
 name: eval-measure
-description: Use when deciding whether an AI app is measured correctly, choosing Galileo metrics, writing expected-output contracts, or defining eval cases before optimizing.
+description: Use when the user asks if an AI app is measured correctly, needs Galileo metrics, expected-output contracts, metric profiles, eval gates, or measurement before optimizing.
 ---
 
 # Eval Measure
@@ -27,6 +27,21 @@ Use `skills/eval-engineer/references/metric-profile-checklist.md` and
   scorers before accepting flags emitted by the app under test.
 - Choose Galileo metrics by failure contract, not by one global list.
 - Identify metric gaps before accepting a cost or quality change.
+
+## Gotchas
+
+- Agent self-reported flags are instrumentation breadcrumbs, not acceptance
+  evidence.
+- Final citations alone are not enough when retrieved-source authority is part
+  of the risk.
+- Do not infer latency, wall time, tokens, or cost as quality metrics.
+
+## Validation Loop
+
+Before finalizing a metric profile, check it against
+`skills/eval-engineer/references/metric-profile-checklist.md` and confirm the
+profile names quality gates, cost/performance metrics, segment gates, metric
+direction, and known gaps.
 
 ## Output
 

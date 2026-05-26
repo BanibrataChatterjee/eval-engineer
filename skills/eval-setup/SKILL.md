@@ -1,6 +1,6 @@
 ---
 name: eval-setup
-description: Use when preparing a project for Eval Engineer, checking the .galileo workspace, configuring editable files, verification commands, app type, or evidence locations.
+description: Use when the user asks to set up Eval Engineer, check .galileo readiness, create workspace scaffolding, or configure editable files, verification commands, app type, or evidence paths.
 ---
 
 # Eval Setup
@@ -25,6 +25,12 @@ missing configuration, and tell the user what evidence is still needed.
 - Do not fetch Galileo evidence unless the user provides a URL/ID or asks for
   `/eval-fetch`.
 - Do not diagnose or fix application behavior during setup.
+
+## Validation Loop
+
+Before reporting ready, confirm `.galileo/config.yml`, `.galileo/current/`,
+`.galileo/eval-dataset/`, `.galileo/sessions/`, and `.galileo/learnings.md`
+exist, then list missing config values without guessing them.
 
 ## Output
 

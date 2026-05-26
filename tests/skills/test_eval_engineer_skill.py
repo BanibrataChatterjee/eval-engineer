@@ -86,7 +86,16 @@ class EvalEngineerSkillTest(unittest.TestCase):
         expectations = {
             "eval-engineer": ["front door", "route", "Current Project State", "/eval-dataset"],
             "eval-setup": [".galileo/config.yml", "Do not guess metrics", "/eval-diagnose"],
-            "eval-fetch": ["Galileo URL", "source.console_url", "project URL", "fetch_ready: true", "fetch_log_stream_packet.py"],
+            "eval-fetch": [
+                "Galileo URL",
+                "source.console_url",
+                "project URL",
+                "fetch_ready: true",
+                "fetch_log_stream_packet.py",
+                "Do not print secret values",
+                "## Gotchas",
+                "## Validation Loop",
+            ],
             "eval-dataset": [
                 "references/eval-datasets.md",
                 ".galileo/eval-dataset/candidates.jsonl",
@@ -94,16 +103,56 @@ class EvalEngineerSkillTest(unittest.TestCase):
                 "Do not promote",
                 "Do not force Eval Engineer fields",
                 "changelog.md",
+                "## Validation Loop",
             ],
             "eval-measure": ["metric-profile-checklist.md", "expected-output contract", "Findings first"],
-            "eval-diagnose": ["rca-recipe.md", "fix surface", "Honor read-only requests"],
-            "eval-cost": ["tokenomics-rca.md", "quality metrics do not regress", "behavior counters"],
+            "eval-diagnose": [
+                "rca-recipe.md",
+                "fix surface",
+                "Honor read-only requests",
+                "Unless the request is read-only",
+                "## Gotchas",
+                "## Validation Loop",
+            ],
+            "eval-cost": [
+                "tokenomics-rca.md",
+                "quality metrics do not regress",
+                "behavior counters",
+                "Load `skills/eval-engineer/references/tokenomics-rca.md` when",
+                "## Gotchas",
+                "## Validation Loop",
+            ],
             "eval-audit": ["OWASP", "Do not fix by default", "Do not read secret values"],
         }
         for skill_name, required_terms in expectations.items():
             text = (ROOT / "skills" / skill_name / "SKILL.md").read_text(encoding="utf-8")
             for term in required_terms:
                 self.assertIn(term, text, f"{term} missing from {skill_name}")
+
+    def test_project_skill_links_cover_all_command_skills(self) -> None:
+        for skill_root in (ROOT / ".agents" / "skills", ROOT / ".claude" / "skills"):
+            if not skill_root.is_dir():
+                continue
+            for skill_name in COMMAND_SKILLS:
+                link = skill_root / skill_name
+                self.assertTrue(link.is_symlink(), f"{link} should be a skill symlink")
+                self.assertEqual(
+                    link.readlink(),
+                    Path("..") / ".." / "skills" / skill_name,
+                    f"{link} should point at the canonical skill source",
+                )
+
+    def test_front_door_description_stays_router_focused(self) -> None:
+        text = (ROOT / "skills" / "eval-engineer" / "SKILL.md").read_text(encoding="utf-8")
+        match = re.search(r"^description:\s*(.+)$", text, flags=re.MULTILINE)
+        self.assertIsNotNone(match)
+        description = match.group(1)
+
+        self.assertIn("unsure which Eval Engineer command", description)
+        self.assertIn("onboarding", description)
+        self.assertNotIn("trace IDs", description)
+        self.assertNotIn("log stream IDs", description)
+        self.assertNotIn("production symptoms", description)
 
     def test_galileo_url_parser_handles_console_urls(self) -> None:
         module = _load_url_parser()

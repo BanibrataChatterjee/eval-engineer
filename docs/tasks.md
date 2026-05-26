@@ -199,5 +199,8 @@
   (`GAL-118`).
 - [ ] Harden command UX around RAG/agent metric fetch, missing scorer
   aggregates, behavior-counter inference, and secret-safe audits (`GAL-119`).
+  - [x] Apply skill-authoring best-practice pass: narrower router trigger,
+    richer focused-skill trigger phrases, conditional reference loading,
+    gotchas, validation loops, and local `/eval-dataset` discovery.
 - [x] Add `/eval-dataset` command skill for creating, reviewing, accepting,
   and rejecting `.galileo/eval-dataset/` cases (`GAL-120`).

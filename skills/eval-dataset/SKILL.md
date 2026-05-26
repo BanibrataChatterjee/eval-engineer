@@ -1,6 +1,6 @@
 ---
 name: eval-dataset
-description: Use when turning Galileo failures, traces, metric gaps, or production examples into Eval Engineer dataset cases or reviewing candidate cases.
+description: Use when the user asks to turn a failure into an eval, create/review/accept/reject dataset cases, or convert Galileo traces, metric gaps, or production examples into cases.
 ---
 
 # Eval Dataset
@@ -46,6 +46,18 @@ ask for evidence before writing a case.
 - When the user wants to upload, reuse, or run cases in Galileo, use the SDK
   workflow in the reference instead of improvising dataset shapes.
 - Do not promote candidates without human review.
+
+## Validation Loop
+
+Before finalizing a dataset change:
+
+1. Check the case against `skills/eval-engineer/references/eval-datasets.md`.
+2. Confirm the case has a concrete failure trigger and metric or local gate that
+   should catch it.
+3. Confirm required/forbidden citations, tools, permissions, source gates, and
+   abstention rules are explicit when relevant.
+4. Validate JSONL syntax after writing or editing.
+5. If accepting or rejecting a case, update `.galileo/eval-dataset/changelog.md`.
 
 ## Output
 

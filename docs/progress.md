@@ -563,3 +563,22 @@ deterministic.
   runner shape third, and Galileo's minimal upload fields when no schema exists.
   Eval Engineer review fields are optional metadata rather than mandatory upload
   columns.
+
+## 2026-05-20
+
+### Skill Authoring Hardening
+
+- Reviewed the Eval Engineer command skills against the official Agent Skills
+  best-practices guidance and the SKILL.md trigger-pattern article (`GAL-119`).
+- Narrowed `eval-engineer` back into a router so focused skills own concrete
+  fetch, diagnose, measure, cost, audit, and dataset jobs.
+- Added richer trigger descriptions to the focused skills for natural user
+  phrasing such as fetching Galileo links, turning failures into evals, making
+  runs cheaper, checking measurement, and launch-readiness review.
+- Added conditional reference-loading guidance, gotchas, and validation loops
+  to focused skills so agents load heavy references only when needed and check
+  artifacts before finalizing.
+- Added local Codex and Claude `/eval-dataset` symlinks for this checkout and
+  test coverage that verifies complete local command discovery when those
+  ignored install folders are present.
+- Captured the durable skill-authoring rule in `AGENTS.md`.

@@ -1,6 +1,6 @@
 ---
 name: eval-cost
-description: Use when reducing token, latency, model, retrieval, tool-call, rerank, self-check, retry, or evaluator cost while preserving AI app quality metrics.
+description: Use when the user asks to make an AI app cheaper or faster, reduce tokens, latency, model/tool/retrieval/rerank/self-check/retry/evaluator cost, or compare cost before/after.
 ---
 
 # Eval Cost
@@ -8,13 +8,16 @@ description: Use when reducing token, latency, model, retrieval, tool-call, rera
 Use this skill for tokenomics RCA. Cost changes are accepted only when Galileo
 quality metrics do not regress.
 
-## Required Reference
+## Conditional References
 
-Use `skills/eval-engineer/references/tokenomics-rca.md`,
-`skills/eval-engineer/scripts/compare_tokenomics_packets.py`,
-`skills/eval-engineer/assets/cost-diagnosis-template.md`,
-`skills/eval-engineer/assets/tokenomics-fix-plan-template.md`, and
-`skills/eval-engineer/assets/quality-preserving-verification-template.md`.
+- Load `skills/eval-engineer/references/tokenomics-rca.md` when choosing the
+  tokenomics workflow or diagnosing why cost moved.
+- Run `skills/eval-engineer/scripts/compare_tokenomics_packets.py` when both
+  baseline and verification packets exist.
+- Load `skills/eval-engineer/assets/cost-diagnosis-template.md`,
+  `skills/eval-engineer/assets/tokenomics-fix-plan-template.md`, and
+  `skills/eval-engineer/assets/quality-preserving-verification-template.md`
+  only when writing those artifacts.
 
 ## Do
 
@@ -28,10 +31,34 @@ Use `skills/eval-engineer/references/tokenomics-rca.md`,
   quality gates by default. Promote one to quality only when the metric profile
   states the desired direction for that route or segment.
 - Protect named quality metrics and segment gates.
-- Reject cheaper candidates when quality metrics do not regress only in the
-  aggregate but fail a segment.
+- Reject cheaper candidates when aggregate quality holds but any required
+  segment gate regresses.
 - Treat lower traffic volume as inconclusive unless per-trace efficiency also
   improves.
+
+## Gotchas
+
+- Cost, latency, wall time, duration, token count, span count, and tool count
+  are efficiency evidence, not quality gates by default.
+- Quality metrics are not always higher-is-better. Error, toxicity,
+  hallucination, policy-violation, and tool-error rates regress when they rise.
+- Aggregate quality can hide route, risk-profile, or customer-segment
+  regressions.
+- For RAG pruning, include hard multi-source or multi-hop cases before keeping
+  a top-k reduction.
+- For agentic workflows, compare agent steps, planner spans, rerank passes,
+  self-check spans, and tool calls so the cheaper loop is explainable.
+
+## Validation Loop
+
+Before keeping a candidate:
+
+1. Compare baseline and verification packets with
+   `compare_tokenomics_packets.py`.
+2. Inspect inferred quality metrics before accepting the decision.
+3. Check segment metrics when available.
+4. Confirm metric gaps are recorded as inconclusive or follow-up work.
+5. Reject or revise the candidate if quality evidence is missing or regressed.
 
 ## Output
 

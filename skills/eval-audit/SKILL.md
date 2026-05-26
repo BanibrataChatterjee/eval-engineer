@@ -1,6 +1,6 @@
 ---
 name: eval-audit
-description: Use when reviewing an AI app for launch readiness, safety, security, OWASP agentic AI risks, metric coverage, traceability, or production RCA gaps.
+description: Use when the user asks for an AI app audit, launch readiness review, safety/security review, OWASP agentic risk check, metric coverage review, or production RCA gap review.
 ---
 
 # Eval Audit
@@ -27,6 +27,12 @@ stores during an audit. It is okay to report variable names, expected variable
 presence, whether `.env` is ignored by git, and whether a project is a git repo.
 If values were already exposed in chat, logs, or committed files, recommend
 rotation; do not infer compromise merely because a local ignored `.env` exists.
+
+## Validation Loop
+
+Before finalizing, check that each finding includes severity, evidence,
+affected surface, and the next command or verification step. If evidence is
+missing, mark the finding as a gap rather than a confirmed defect.
 
 ## Output
 

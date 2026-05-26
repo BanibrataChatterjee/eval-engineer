@@ -1,6 +1,6 @@
 ---
 name: eval-diagnose
-description: Use when Galileo evidence is available and the user wants root-cause analysis for failed, low-quality, unsafe, regressed, or unreliable AI app behavior.
+description: Use when Galileo evidence is available and the user asks why a trace, session, log stream, experiment, metric, or AI app behavior failed, regressed, or became unsafe.
 ---
 
 # Eval Diagnose
@@ -28,8 +28,31 @@ Use `skills/eval-engineer/references/rca-recipe.md`,
   inline and include a short "Would write" list for any suggested artifact
   paths.
 
+## Gotchas
+
+- Fetched debug packets are the RCA source of truth when scorer jobs are still
+  settling or runner output disagrees with fetched metrics.
+- A prompt diff, local score, or code diff is not proof of improvement without
+  before/after Galileo evidence.
+- Bare correctness or factuality can be a smoke test only. Prefer the metric
+  contract tied to the case risk.
+- Safe final wording is not enough for source-authority cases if unsafe or
+  forbidden retrieved context entered the task surface.
+
+## Validation Loop
+
+Before finalizing:
+
+1. Run `python3 skills/eval-engineer/scripts/summarize_debug_packet.py <packet>`
+   unless a compact summary is already available.
+2. Check that every RCA claim names supporting metric, trace, span, session,
+   experiment, dataset, or log-stream evidence.
+3. Confirm the fix surface is bounded and allowed by `.galileo/config.yml`.
+4. If any claim lacks evidence, downgrade it to a hypothesis or route to
+   `/eval-fetch` or `/eval-measure`.
+
 ## Output
 
-Produce `.galileo/current/diagnosis.md` and, when justified,
+Unless the request is read-only, produce `.galileo/current/diagnosis.md` and, when justified,
 `.galileo/current/fix-plan.md`. If evidence is insufficient, route to
 `/eval-fetch` or `/eval-measure`.

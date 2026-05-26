@@ -61,10 +61,38 @@ The north-star loop is:
 - Use `skills/eval-engineer/references/rca-recipe.md` for generalized
   diagnose-fix-verify work and update it when a reusable Galileo RCA pattern is
   discovered.
+- When improving command skills, keep frontmatter descriptions trigger-focused,
+  keep `eval-engineer` as a narrow router, load references conditionally, and
+  promote recurring Galileo mistakes into focused skill gotchas and validation
+  loops.
 - Keep detailed Galileo mechanics in `skills/eval-engineer/references/`.
 - Keep deterministic helpers in `skills/eval-engineer/scripts/`.
 - Do not hardcode `TC-1`, the Nexus support agent, Brazil, one model, or one
   metric into the general skill.
+
+### Skill Package Hygiene
+
+- Treat skill frontmatter as routing surface, not documentation. Descriptions
+  should name the user job and evidence objects that should trigger the skill:
+  Galileo URLs, traces, sessions, log streams, metrics, datasets, experiments,
+  tokenomics, RCA, audit, setup, and measurement. Compact wording is good only
+  when these trigger nouns survive.
+- Keep the router and command skills non-overlapping. `eval-engineer` routes and
+  reports workspace status; `eval-fetch` retrieves evidence; `eval-diagnose`
+  performs RCA; `eval-measure` defines metric contracts; `eval-dataset` turns
+  failures into cases; `eval-cost` handles tokenomics; `eval-audit` reviews risk
+  and launch readiness; and so on.
+- Budget `SKILL.md` for the workflow an agent must follow after the skill
+  triggers. Move Galileo API mechanics, schemas, long examples, and edge-case
+  notes to `references/`; move repeatable parsing, summarizing, and comparison
+  work to `scripts/`.
+- Before merging, renaming, deleting, or splitting skills, verify the kept copy
+  is present in the canonical source, the Codex and Claude install links, and
+  the installer bundle. Check current usage evidence such as skill mentions,
+  `SKILL.md` reads, local install roots, and test coverage before deciding a
+  skill is unused.
+- Do not delete ignored or untracked skill directories unless the replacement
+  path is named or the user confirms they are disposable.
 
 ## Working Set
 
