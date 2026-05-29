@@ -7,7 +7,8 @@ duplicating it.
 
 ## Recommended Quick Install
 
-Install into the current project for both Codex and Claude Code:
+Install into the current project for both Codex and Claude Code. For Codex,
+run this from the exact directory where you will launch `codex`:
 
 ```bash
 uvx --from git+https://github.com/Galileo-Agent-Labs/eval-engineer.git \
@@ -19,6 +20,12 @@ That creates:
 - `.agents/skills/eval-*` for Codex.
 - `.claude/skills/eval-*` for Claude Code.
 - `.galileo/` with safe placeholder workspace files if they do not exist.
+
+Codex project-skill discovery is tied to the working directory opened by
+Codex. Do not assume skills installed in a parent workspace will be discovered
+from every child project. If you will run Codex from `apps/support-agent`,
+install with `--project-dir apps/support-agent`, or use a user-scope Codex
+install.
 
 The command skills are:
 
@@ -39,6 +46,10 @@ Validate the install:
 uvx --from git+https://github.com/Galileo-Agent-Labs/eval-engineer.git \
   eval-engineer check --target both --scope project --project-dir .
 ```
+
+The check command confirms the skill files exist at the requested destination.
+It is not a live discovery check for an already-running Codex session. Restart
+Codex after install and verify the skill appears in the new session.
 
 Use a user-scope install only when the skill should be available across all
 projects:
