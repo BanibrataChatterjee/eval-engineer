@@ -16,7 +16,8 @@ actually improved.
 
 ## Quick Installation
 
-Install Eval Engineer into the project you want to debug or improve:
+Install Eval Engineer into the directory where you will launch the agent. For
+Codex, this should be the exact project directory you open with `codex`:
 
 ```bash
 uvx --from git+https://github.com/Galileo-Agent-Labs/eval-engineer.git \
@@ -24,13 +25,14 @@ uvx --from git+https://github.com/Galileo-Agent-Labs/eval-engineer.git \
 ```
 
 Project install writes skills into `.agents/skills/eval-*` for Codex and
-`.claude/skills/eval-*` for Claude Code. It also prepares a minimal `.galileo/`
-workspace without overwriting existing files.
+`.claude/skills/eval-*` for Claude Code under that project directory. It also
+prepares a minimal `.galileo/` workspace without overwriting existing files.
 
 Start a new Claude Code or Codex session from this same project folder after
-installing. Codex discovers project skills from `.agents/skills` in the current
-directory and its parents; if Codex was opened somewhere else, it will not see
-this project's skills.
+installing. Do not rely on parent-directory traversal for Codex project skills:
+install into the directory that will be the Codex working directory. If Codex is
+opened from a child or sibling folder, reinstall there or use a user-scope
+install.
 
 Claude Code surfaces the skills as slash commands:
 
@@ -59,11 +61,15 @@ $eval-audit      review launch, safety, OWASP, and coverage risk
 ```
 
 If the skills do not appear, restart the host agent. For Codex, also confirm the
-skills were installed under the project you opened:
+skills were installed under the project directory you opened:
 
 ```bash
 find .agents/skills -maxdepth 2 -name SKILL.md | sort
 ```
+
+`eval-engineer check` validates that files exist at the requested destination.
+It cannot prove that an already-running Codex session has discovered the skills;
+restart Codex after installing or changing the destination.
 
 The first useful prompt is usually:
 
